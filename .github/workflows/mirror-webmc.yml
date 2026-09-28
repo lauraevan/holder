@@ -1,0 +1,25 @@
+name: Mirror webmc archive
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Mirror evanjeffrey1212-eng/webmc into holder
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          git clone --mirror https://github.com/evanjeffrey1212-eng/webmc.git source.git
+          cd source.git
+          git remote add holder "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push holder --force --all
+          git push holder --force --tags
