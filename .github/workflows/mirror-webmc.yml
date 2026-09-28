@@ -13,13 +13,23 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
-      - name: Mirror evanjeffrey1212-eng/webmc into holder
+      - name: Archive current webmc snapshot inside holder
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          git clone --mirror https://github.com/evanjeffrey1212-eng/webmc.git source.git
-          cd source.git
-          git remote add holder "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          git push holder --force --all
-          git push holder --force --tags
+
+          git clone --depth=1 "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" holder
+          git clone --depth=1 https://github.com/evanjeffrey1212-eng/webmc.git source
+
+          rm -rf source/.git
+          rm -rf holder/webmc
+          mkdir -p holder/webmc
+          cp -a source/. holder/webmc/
+
+          cd holder
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add webmc
+          git commit -m "Archive evanjeffrey1212-eng/webmc snapshot" || exit 0
+          git push origin HEAD:main
