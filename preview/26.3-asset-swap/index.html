@@ -2,6 +2,31 @@
 <html style="width:100%;height:100%;background-color:black;">
 <head>
 <meta name="robots" content="noindex,nofollow">
+<script>
+(function(){
+  const p="testbuild-26.3-en-v2::";
+  try {
+    const idb=window.indexedDB;
+    if(idb && typeof idb.open==="function"){
+      const open=idb.open.bind(idb);
+      const del=typeof idb.deleteDatabase==="function" ? idb.deleteDatabase.bind(idb) : null;
+      idb.open=function(name, version){
+        const n=p+String(name);
+        return arguments.length > 1 ? open(n, version) : open(n);
+      };
+      if(del) idb.deleteDatabase=function(name){ return del(p+String(name)); };
+      if(typeof idb.databases==="function"){
+        const dbs=idb.databases.bind(idb);
+        idb.databases=async function(){
+          const list=await dbs();
+          return list.filter(x=>x && typeof x.name==="string" && x.name.startsWith(p))
+            .map(x=>({name:x.name.slice(p.length),version:x.version}));
+        };
+      }
+    }
+  } catch(e) { console.warn("[testbuild] IndexedDB isolation failed", e); }
+})();
+</script>
 <style>
 #assetSwapBadge{position:fixed;top:8px;left:8px;z-index:2147483647;background:#111;color:#fff;border:1px solid #333;border-radius:6px;font:12px/1.2 system-ui,-apple-system,sans-serif;padding:6px 8px;display:flex;gap:8px;align-items:center}
 #assetSwapBadge button{all:unset;cursor:pointer;font-size:14px;line-height:1}
@@ -508,14 +533,14 @@ var TeaVM=TeaVM||{};TeaVM.wasmGC=TeaVM.wasmGC||(()=>{let n=new Map;let e=null;le
     window.eaglercraftXOpts = {
         container: "game_frame",
         lang: "en_us",
-        localStorageNamespace: "testbuild-26.3-en-us-v1",
+        localStorageNamespace: "testbuild-26.3-en-us-v2",
         assetsURI: [
             { url: "assets.epk?v=141561971c510705", path: "" },
             { url: "sounds.epk?v=141561971c510705", path: "" }
         ],
         localesURI: "lang/",
-        worldsDB: "worlds",
-        resourcePacksDB: "resourcePacks",
+        worldsDB: "testbuild-worlds-en-v2",
+        resourcePacksDB: "testbuild-resourcepacks-en-v2",
         crashOnUncaughtExceptions: true,
         enableEPKVersionCheck: false,
         allowBootMenu: false,
