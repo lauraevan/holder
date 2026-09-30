@@ -1,0 +1,3 @@
+assets/eagler/lang/en_us.json	12616
+assets/minecraft/lang/deprecated.json	27841
+assets/minecraft/lang/en_us.json	532859
