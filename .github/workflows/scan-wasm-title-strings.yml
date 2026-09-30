@@ -1,0 +1,27 @@
+name: Inspect 26.2 title strings
+on:
+  push:
+    paths:
+      - 'tools/scan_wasm_title_strings.py'
+      - '.github/workflows/scan-wasm-title-strings.yml'
+permissions:
+  contents: write
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 -m pip install --quiet brotli
+      - name: Download and inspect pinned 26.2 client
+        run: |
+          set -euo pipefail
+          url='https://raw.githubusercontent.com/Enchantment-Niko/mcjs/bc586558628e2d7ef8ea1cebf198495625619eb2/wasm-loader/26.2/eag26.2-wasm-br.wasm'
+          curl -fL "$url" -o /tmp/classes.br
+          python3 tools/scan_wasm_title_strings.py /tmp/classes.br preview/26.3-asset-swap/wasm-title-string-scan.txt
+      - name: Commit report
+        run: |
+          git config user.name 'testbuild-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add preview/26.3-asset-swap/wasm-title-string-scan.txt
+          git diff --cached --quiet || git commit -m 'Inspect title screen strings in 26.2 WASM'
+          git push
