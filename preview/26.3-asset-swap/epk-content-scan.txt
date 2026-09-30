@@ -1,0 +1,78 @@
+## Rewritten by o_xer
+count=0
+
+## Rewritten by
+count=0
+
+## o_xer
+count=0
+
+## Eaglercraft 26.2 u1
+count=0
+
+## Eaglercraft 26.2
+count=0
+
+## Minecraft 26.3
+count=0
+
+## dappled_forest
+assets/minecraft/lang/en_us.json
+data/minecraft/tags/worldgen/biome/has_structure/trial_chambers.json
+data/minecraft/tags/worldgen/biome/is_forest.json
+data/minecraft/tags/worldgen/biome/is_overworld.json
+data/minecraft/tags/worldgen/biome/stronghold_biased_to.json
+data/minecraft/worldgen/configured_feature/trees_dappled_forest.json
+data/minecraft/worldgen/placed_feature/trees_dappled_forest.json
+data/minecraft/worldgen/biome/dappled_forest.json
+data/minecraft/loot_table/chests/abandoned_camp_common_chest.json
+data/minecraft/structure/abandoned_camp/camp/dappled_forest/campsite_dappled_forest_1.nbt
+data/minecraft/structure/abandoned_camp/camp/dappled_forest/campsite_dappled_forest_2.nbt
+data/minecraft/structure/abandoned_camp/camp/dappled_forest/campsite_dappled_forest_3.nbt
+data/minecraft/structure/abandoned_camp/camp/dappled_forest/campsite_dappled_forest_4.nbt
+data/minecraft/structure/abandoned_camp/tent/dappled_forest/tent_dappled_forest_1.nbt
+data/minecraft/structure/abandoned_camp/tent/dappled_forest/tent_dappled_forest_10.nbt
+data/minecraft/structure/abandoned_camp/tent/dappled_forest/tent_dappled_forest_2.nbt
+data/minecraft/structure/abandoned_camp/tent/dappled_forest/tent_dappled_forest_3.nbt
+data/minecraft/structure/abandoned_camp/tent/dappled_forest/tent_dappled_forest_4.nbt
+data/minecraft/structure/abandoned_camp/tent/dappled_forest/tent_dappled_forest_5.nbt
+data/minecraft/structure/abandoned_camp/tent/dappled_forest/tent_dappled_forest_6.nbt
+data/minecraft/structure/abandoned_camp/tent/dappled_forest/tent_dappled_forest_7.nbt
+data/minecraft/structure/abandoned_camp/tent/dappled_forest/tent_dappled_forest_8.nbt
+data/minecraft/structure/abandoned_camp/tent/dappled_forest/tent_dappled_forest_9.nbt
+data/minecraft/tags/worldgen/biome/has_structure/abandoned_camp_dappled_forest.json
+data/minecraft/tags/worldgen/structure/abandoned_camp.json
+data/minecraft/tags/worldgen/structure/on_abandoned_camp_dappled_forest.json
+data/minecraft/worldgen/structure/abandoned_camp_dappled_forest.json
+data/minecraft/worldgen/structure_set/abandoned_camp.json
+data/minecraft/worldgen/template_pool/abandoned_camp/camp/dappled_forest.json
+data/minecraft/worldgen/template_pool/abandoned_camp/tent/dappled_forest.json
+data/minecraft/loot_table/joey/explorer_maps/dappled_forest_camp.json
+count=31
+
+## Dappled Forest
+assets/minecraft/lang/en_us.json
+data/minecraft/worldgen/configured_feature/trees_dappled_forest.json
+data/minecraft/worldgen/placed_feature/trees_dappled_forest.json
+data/minecraft/worldgen/biome/dappled_forest.json
+data/minecraft/structure/abandoned_camp/camp/dappled_forest/campsite_dappled_forest_1.nbt
+data/minecraft/structure/abandoned_camp/camp/dappled_forest/campsite_dappled_forest_2.nbt
+data/minecraft/structure/abandoned_camp/camp/dappled_forest/campsite_dappled_forest_3.nbt
+data/minecraft/structure/abandoned_camp/camp/dappled_forest/campsite_dappled_forest_4.nbt
+data/minecraft/structure/abandoned_camp/tent/dappled_forest/tent_dappled_forest_1.nbt
+data/minecraft/structure/abandoned_camp/tent/dappled_forest/tent_dappled_forest_10.nbt
+data/minecraft/structure/abandoned_camp/tent/dappled_forest/tent_dappled_forest_2.nbt
+data/minecraft/structure/abandoned_camp/tent/dappled_forest/tent_dappled_forest_3.nbt
+data/minecraft/structure/abandoned_camp/tent/dappled_forest/tent_dappled_forest_4.nbt
+data/minecraft/structure/abandoned_camp/tent/dappled_forest/tent_dappled_forest_5.nbt
+data/minecraft/structure/abandoned_camp/tent/dappled_forest/tent_dappled_forest_6.nbt
+data/minecraft/structure/abandoned_camp/tent/dappled_forest/tent_dappled_forest_7.nbt
+data/minecraft/structure/abandoned_camp/tent/dappled_forest/tent_dappled_forest_8.nbt
+data/minecraft/structure/abandoned_camp/tent/dappled_forest/tent_dappled_forest_9.nbt
+data/minecraft/tags/worldgen/biome/has_structure/abandoned_camp_dappled_forest.json
+data/minecraft/tags/worldgen/structure/on_abandoned_camp_dappled_forest.json
+data/minecraft/worldgen/structure/abandoned_camp_dappled_forest.json
+data/minecraft/worldgen/template_pool/abandoned_camp/camp/dappled_forest.json
+data/minecraft/worldgen/template_pool/abandoned_camp/tent/dappled_forest.json
+data/minecraft/loot_table/joey/explorer_maps/dappled_forest_camp.json
+count=24
