@@ -1,0 +1,7 @@
+minecraft keys: 8341
+eagler keys: 146
+extra 26.3 keys translated: 210
+menu.singleplayer: Singleplayer
+menu.multiplayer: Multiplayer
+menu.options: Options...
+Chinese codepoints remaining: 0
