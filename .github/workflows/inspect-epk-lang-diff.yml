@@ -1,0 +1,25 @@
+name: Inspect EPK English key delta
+on:
+  push:
+    paths:
+      - 'tools/epk_lang_diff.py'
+      - '.github/workflows/inspect-epk-lang-diff.yml'
+permissions:
+  contents: write
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          set -euo pipefail
+          base='https://raw.githubusercontent.com/Enchantment-Niko/mcjs/bc586558628e2d7ef8ea1cebf198495625619eb2/wasm-loader'
+          curl -fL "$base/26.2/eag26.2-assets.epk" -o /tmp/26.2.epk
+          curl -fL "$base/26.3/eag26.3-assets.epk" -o /tmp/26.3.epk
+          python3 tools/epk_lang_diff.py /tmp/26.2.epk /tmp/26.3.epk preview/26.3-asset-swap/epk-lang-diff.txt
+      - run: |
+          git config user.name 'testbuild-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add preview/26.3-asset-swap/epk-lang-diff.txt
+          git diff --cached --quiet || git commit -m 'Report 26.3 English language key delta'
+          git push
