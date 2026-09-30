@@ -1,0 +1,17 @@
+26.2 files: 19509
+26.3 files: 21171
+26.2 compression: G
+26.3 compression: G
+
+LANGUAGE-LIKE FILES:
+assets/eagler/lang/en_us.json | 26.2=12542 | 26.3=11942 | same=False
+  26.3 chars=9035 chinese_codepoints=1374
+assets/eagler/lang/zh_cn.json | 26.2=11942 | 26.3=- | same=-
+assets/minecraft/lang/deprecated.json | 26.2=27841 | 26.3=27841 | same=True
+assets/minecraft/lang/en_us.json | 26.2=520729 | 26.3=524410 | same=False
+  26.3 chars=415097 chinese_codepoints=51542
+  menu.singleplayer = 单人游戏
+  menu.multiplayer = 多人游戏
+  menu.options = 选项…
+  options.title = 选项
+assets/minecraft/lang/zh_cn.json | 26.2=534023 | 26.3=- | same=-
