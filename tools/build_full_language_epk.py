@@ -74,9 +74,9 @@ def resolve_26_3():
 
 def official_languages(version):
     out={}
-    pack_meta=None
 
-    # Asset index is the canonical source for downloaded language files.
+    # Download every official language asset referenced by Mojang's 26.3
+    # asset index.
     idx=get_json(version["assetIndex"]["url"])
     for key,obj in idx.get("objects",{}).items():
         lk=key.lower()
@@ -84,23 +84,45 @@ def official_languages(version):
             h=obj["hash"]
             out["assets/"+key]=get_bytes("https://resources.download.minecraft.net/"+h[:2]+"/"+h)
 
-    # The built-in pack metadata contains the language registry in modern Java.
-    # The client jar may also carry en_us or other language resources directly.
+    # Some language resources, especially the default locale, can live
+    # directly in the client jar.
     client=get_bytes(version["downloads"]["client"]["url"])
     with zipfile.ZipFile(io.BytesIO(client)) as z:
-        if "pack.mcmeta" in z.namelist():
-            pack_meta=json.loads(z.read("pack.mcmeta").decode("utf-8-sig"))
         for name in z.namelist():
             ln=name.lower()
             if ln.startswith("assets/minecraft/lang/") and ln.endswith(".json"):
                 out.setdefault(name,z.read(name))
 
-    if not isinstance(pack_meta,dict):
-        raise RuntimeError("official 26.3 client pack.mcmeta was not found")
-    meta=pack_meta.get("language")
-    if not isinstance(meta,dict) or not meta:
-        raise RuntimeError("official 26.3 pack.mcmeta has no language metadata section")
-    return out,meta,pack_meta
+    # Build the language registry from the official translation files
+    # themselves. Modern language JSONs identify their own name/region/code.
+    rtl={"ar_sa","fa_ir","he_il","ur_pk","yi_de"}
+    meta={}
+    for name,data in sorted(out.items()):
+        if not name.lower().startswith("assets/minecraft/lang/"):
+            continue
+        code=Path(name).stem.lower()
+        if code in ("deprecated","languages"):
+            continue
+        try:
+            obj=json.loads(data.decode("utf-8-sig"))
+        except Exception:
+            continue
+        if not isinstance(obj,dict):
+            continue
+        declared=str(obj.get("language.code",code)).lower()
+        if declared and declared!=code:
+            code=declared
+        lang_name=str(obj.get("language.name",code))
+        region=str(obj.get("language.region",""))
+        meta[code]={
+            "name":lang_name,
+            "region":region,
+            "bidirectional":code in rtl
+        }
+
+    if not meta:
+        raise RuntimeError("no official 26.3 language metadata could be derived from language assets")
+    return out,meta
 
 def rebuild(epk, replacements, additions, out):
     body=bytearray()
@@ -139,7 +161,7 @@ def main():
     src_files=file_map(source); base_files=file_map(baseline)
 
     version=resolve_26_3()
-    langs,meta,official_pack_meta=official_languages(version)
+    langs,meta=official_languages(version)
 
     # Normalize official paths and discard languages.json from per-locale counting.
     official={}
@@ -158,7 +180,9 @@ def main():
             existing_pack={}
     if not isinstance(existing_pack,dict):
         existing_pack={}
-    existing_pack["language"]=official_pack_meta["language"]
+    existing_pack["language"]=meta
+    if "pack" not in existing_pack:
+        existing_pack["pack"]={"description":"Minecraft 26.3 multilingual assets","pack_format":92}
     pack_mcmeta_bytes=encode_json(existing_pack)
 
     codes=sorted(k.lower() for k in meta.keys())
