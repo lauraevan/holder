@@ -74,18 +74,21 @@ def resolve_26_3():
 
 def official_languages(version):
     out={}
+    pack_meta=None
 
-    # Download every official language asset referenced by Mojang's 26.3
-    # asset index.
+    # Mojang's 26.3 asset index contains both the language resources and the
+    # built-in pack.mcmeta language registry.
     idx=get_json(version["assetIndex"]["url"])
     for key,obj in idx.get("objects",{}).items():
         lk=key.lower()
+        h=obj["hash"]
+        url="https://resources.download.minecraft.net/"+h[:2]+"/"+h
         if lk.startswith("minecraft/lang/") and lk.endswith(".json"):
-            h=obj["hash"]
-            out["assets/"+key]=get_bytes("https://resources.download.minecraft.net/"+h[:2]+"/"+h)
+            out["assets/"+key]=get_bytes(url)
+        elif lk=="pack.mcmeta":
+            pack_meta=json.loads(get_bytes(url).decode("utf-8-sig"))
 
-    # Some language resources, especially the default locale, can live
-    # directly in the client jar.
+    # The default locale can also be shipped directly in the client jar.
     client=get_bytes(version["downloads"]["client"]["url"])
     with zipfile.ZipFile(io.BytesIO(client)) as z:
         for name in z.namelist():
@@ -93,36 +96,12 @@ def official_languages(version):
             if ln.startswith("assets/minecraft/lang/") and ln.endswith(".json"):
                 out.setdefault(name,z.read(name))
 
-    # Build the language registry from the official translation files
-    # themselves. Modern language JSONs identify their own name/region/code.
-    rtl={"ar_sa","fa_ir","he_il","ur_pk","yi_de"}
-    meta={}
-    for name,data in sorted(out.items()):
-        if not name.lower().startswith("assets/minecraft/lang/"):
-            continue
-        code=Path(name).stem.lower()
-        if code in ("deprecated","languages"):
-            continue
-        try:
-            obj=json.loads(data.decode("utf-8-sig"))
-        except Exception:
-            continue
-        if not isinstance(obj,dict):
-            continue
-        declared=str(obj.get("language.code",code)).lower()
-        if declared and declared!=code:
-            code=declared
-        lang_name=str(obj.get("language.name",code))
-        region=str(obj.get("language.region",""))
-        meta[code]={
-            "name":lang_name,
-            "region":region,
-            "bidirectional":code in rtl
-        }
-
-    if not meta:
-        raise RuntimeError("no official 26.3 language metadata could be derived from language assets")
-    return out,meta
+    if not isinstance(pack_meta,dict):
+        raise RuntimeError("official 26.3 asset index did not provide pack.mcmeta")
+    meta=pack_meta.get("language")
+    if not isinstance(meta,dict) or not meta:
+        raise RuntimeError("official 26.3 pack.mcmeta has no language registry")
+    return out,meta,pack_meta
 
 def rebuild(epk, replacements, additions, out):
     body=bytearray()
@@ -161,7 +140,7 @@ def main():
     src_files=file_map(source); base_files=file_map(baseline)
 
     version=resolve_26_3()
-    langs,meta=official_languages(version)
+    langs,meta,official_pack_meta=official_languages(version)
 
     # Normalize official paths and discard languages.json from per-locale counting.
     official={}
@@ -180,9 +159,9 @@ def main():
             existing_pack={}
     if not isinstance(existing_pack,dict):
         existing_pack={}
-    existing_pack["language"]=meta
-    if "pack" not in existing_pack:
-        existing_pack["pack"]={"description":"Minecraft 26.3 multilingual assets","pack_format":92}
+    existing_pack["language"]=official_pack_meta["language"]
+    if "pack" not in existing_pack and "pack" in official_pack_meta:
+        existing_pack["pack"]=official_pack_meta["pack"]
     pack_mcmeta_bytes=encode_json(existing_pack)
 
     codes=sorted(k.lower() for k in meta.keys())
@@ -238,7 +217,7 @@ def main():
 
     report={
       "minecraft_version":version["id"],
-      "language_metadata_source":"official client pack.mcmeta",
+      "language_metadata_source":"official 26.3 asset-index pack.mcmeta",
       "official_language_count":len(codes),
       "installed_language_count":len(present),
       "has_turkish":"tr_tr" in present,
