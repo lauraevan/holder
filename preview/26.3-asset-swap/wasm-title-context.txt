@@ -1,0 +1,214 @@
+## OFFSET 99631208
+99630908: e,reader.result);});reader.addEventListener("error",function(evt){callback(null,null);});reader.readAsArrayBuffer(value);};eag(inputElement.files[0],new FileReader());}else callback(null,null);}
+99631108: {cursor.continue([key]);}1Game Crashed! I have fallen and I can't get up!
+99631184: eaglercraft.version = "
+99631208: 26.2 u1
+99631219: eaglercraft.minecraft = "26.2"
+99631251: eaglercraft.brand = "o_xer"
+99631280: eaglercraft.username = "4webgl = WebGL2 GpuDeviceBackend active (Phase 3.3b)
+99631358: runtime = 
+99631370: {try {return JSON.stringify({memory:typeof performance!=='undefined'&&performance.memory?{usedJSHeapSize:performance.memory.usedJSHeapSize
+
+## OFFSET 99631272
+99630972: ){callback(null,null);});reader.readAsArrayBuffer(value);};eag(inputElement.files[0],new FileReader());}else callback(null,null);}
+99631108: {cursor.continue([key]);}1Game Crashed! I have fallen and I can't get up!
+99631184: eaglercraft.version = "
+99631208: 26.2 u1
+99631219: eaglercraft.minecraft = "26.2"
+99631251: eaglercraft.brand = "o_xer"
+99631280: eaglercraft.username = "4webgl = WebGL2 GpuDeviceBackend active (Phase 3.3b)
+99631358: runtime = 
+99631370: {try {return JSON.stringify({memory:typeof performance!=='undefined'&&performance.memory?{usedJSHeapSize:performance.memory.usedJSHeapSize||0,totalJSHeapSize:performance.memory.totalJSHeapSize||0,jsHeap
+
+## OFFSET 99950881
+99950581: quences
+99950589: scheduled_events
+99950606: custom_boss_events
+99950625: structure
+99950635: .nbt
+99950640: .snbt
+99950646: stopwatches
+99950658: SURVIVAL
+99950667: survival
+99950676: CREATIVE
+99950685: ADVENTURE
+99950695: adventure
+99950705: SPECTATOR
+99950723: SingleplayerServerController26
+99950754: deathScreen.respawn
+99950774: deathScreen.spectate
+99950795: deathScreen.titleScreen
+99950819: Minecraft 
+99950830:  Demo
+99950836: menu.modded
+99950848: eagler.menu.brand
+99950866: Eaglercraft %s
+99950881: o_xer
+99950887: eagler.menu.rewrittenBy
+99950911: Rewritten by %s
+99950927: menu.credits
+99950940: Credits*return globalThis.__eaglerAutoTest==='sp';
+99950991: narrator.screen.title
+99951013: title.credits
+99951027: PERFORM_RESPAWN
+99951043: REQUEST_STATS
+99951057: REQUEST_GAMERULE_VALUES
+99951081: SOUNDS
+99951088: OpenAL Soft on  textures/gui/title/minecraft.png textures/gui/title/minceraft.png
+99951170: textures/gu
+
+## OFFSET 99950911
+99950611: m_boss_events
+99950625: structure
+99950635: .nbt
+99950640: .snbt
+99950646: stopwatches
+99950658: SURVIVAL
+99950667: survival
+99950676: CREATIVE
+99950685: ADVENTURE
+99950695: adventure
+99950705: SPECTATOR
+99950723: SingleplayerServerController26
+99950754: deathScreen.respawn
+99950774: deathScreen.spectate
+99950795: deathScreen.titleScreen
+99950819: Minecraft 
+99950830:  Demo
+99950836: menu.modded
+99950848: eagler.menu.brand
+99950866: Eaglercraft %s
+99950881: o_xer
+99950887: eagler.menu.rewrittenBy
+99950911: Rewritten by %s
+99950927: menu.credits
+99950940: Credits*return globalThis.__eaglerAutoTest==='sp';
+99950991: narrator.screen.title
+99951013: title.credits
+99951027: PERFORM_RESPAWN
+99951043: REQUEST_STATS
+99951057: REQUEST_GAMERULE_VALUES
+99951081: SOUNDS
+99951088: OpenAL Soft on  textures/gui/title/minecraft.png textures/gui/title/minceraft.png
+99951170: textures/gui/title/edition.png
+99951201: AABB[
+99951207: ] ->
+
+## OFFSET 100520478
+100520178: isEaglerX188Running==="yes")return true;globalThis.__isEaglerX188Running="yes";return false;}4ClientMain: [ERROR] eaglercraftx is already running!.ClientMain: [INFO] eaglercraftx is starting...
+100520372: pct[{try {if(typeof window.__eaglerBoot==='function')window.__eaglerBoot(pct,text);}catch(e){}}
+100520468: Preparing Eaglercraft 26.2
+100520499: {if(typeof eaglercraftXOpts==="undefined"){return null;}else if(typeof eaglercraftXOpts==="string"){return JSON.parse(eaglercraftXOpts);}else {return eaglercraftXOpts;}}GClientMain: [ERROR] the "window.eaglercraftXOpts" variable is undefined-ClientMain: [ERROR] eaglercraftx cann
+
+## OFFSET 101694784
+101694484: ar protoConstructor=current.prototype.constructor;if(protoConstructor!==current&&isWebSocket(protoConstructor)&&(!isWebSocket(captured)||captured===current))captured=protoConstructor;}catch(e){}}return isWispcraft&&isWebSocket(captured)?new captured(uri):null;}
+101694746: return new WebSocket(url);
+101694773: binaryType
+101694784: Eaglercraft 26.2
+101694801: 26.2
+101694806: Timed out waiting for Eagler  Connection closed during Eagler %Incompatible Eagler server (handshake
+101694907: ; Minecraft
+101694926: skin_v2
+101694934: cape_v1
+101694942: skin_v1.Failed to {}, aborting, progress might be lost
+101694997: Failed to {}, retrying {}/{}
+101695026: Pushback buffer full
+101695047: Invalid icon for world {}
+101695073: Loading net
+
+## OFFSET 101748555
+101748255: hrome.
+101748262: 3. Open the copied Web App Internals address in Chrome.
+101748318: 4. Under Developer Mode, find Install IWA from Signed Web Bundle, click Select file..., and choose the .swbn made by the patcher.
+101748448: 5. Launch the app, open Multiplayer, and enter the server address.
+101748515: 6. Later, open chrome://apps/ and click Eaglercraft 26.2 to launch it again.
+101748592: Invalid selector component: 
+101748621: , selectors=
+101748634: resourcePack.browser.choose
+101748662: Choose a ZIP resource pack...
+101748696: options.font.title
+101748715: O o o
+101748721: o O o
+101748727: o o O#createWorld.customize.presets.title argument.entity.selector.unknown!argument.entity.options.valueless
+101748836: , shakeDirection=
+
+## OFFSET 101901092
+101900792: -----
+101900798: Private key must be RSA -----BEGIN RSA PRIVATE KEY-----
+101900856: -----END RSA PRIVATE KEY-----
+101900887: editCape.cape.invalidFormat
+101900915: editCape.cape.invalidSize]The selected image '%s' is not the right size!
+101900988: Eaglercraft only supports 32x32 or 64x32 capes
+101901035: eagler.cape.
+101901048: file-type
+101901058: epk/profile2623EPK file is not an Eaglercraft 26.2 profile backup!
+101901125: _eaglercraftX.p
+101901141: _eaglercraftX.g
+101901157: Failed to access level {}
+101901183: Failed to load world data {}
+101901212: DropChances
+101901224: RecipesUsedSize
+101901240: RecipeLocation
+101901255: RecipeAmount
+101901268: Placed feature 
+101901284:  in biome 
+101901295: Missing file: {}%comparing lower "{}" with {} "{}": {}%comparing upper "{}" with {} "{}": {}
+101901388: mult
+
+## OFFSET 101905055
+101904755: contains an unreadable level.dat'Skipping zip entry with unsafe name: {}
+101904828:  files, 
+101904837:  KB8Vanilla world was successfully extracted into world "{}"0Could not roll back failed import for world "{}"
+101904947: Importing world "{}" from EPK
+101904977: epk/world262'Skipping EPK entry with unsafe name: {}0File does not contain an Eaglercraft 26.2 world!
+101905079: epk/world188
+101905092: epk/world152
+101905105: Unsupported world type: (This is an Eaglercraft 1.8/1.5.2 world (+), which this 26.2 client cannot import yet)The EPK file did not contain a level.dat!.EPK was successfully extracted into world "{}"
+101905304: unnamed%Exporting world directory "{}" as EPK
+101905350: World
+
+## OFFSET 101907643
+101907343:  imported
+101907353: .eagler_imported%Cannot copy file between filesystems!
+101907408: yyyy
+101907413: MM/dd/yyyy
+101907424: hh:mm:ss aa
+101907438:  #  Eagler EPK v2.0 (c) 
+101907464:  #  export: on 
+101907482:  #  world name: 
+101907499: This happened somehow
+101907521: File size = {} bytes
+101907542: Download interrupted1Filesize was bigger than maximum allowed (got >= 
+101907613: , limit was 
+101907626: ChunkX
+101907633: ChunkZ
+101907643: Eaglercraft 26.2;0"P2P relay host handshake timed out&P2P LAN room opened on {} with code {}
+101907736: Unexpected P2P host packet 
+101907764: P2P relay rejected hosting: 
+101907793: Invalid P2P signaling relay URI
+101907825: Skipping file: {}/{}
+101907846: .mcr;{}: pre-anvil .mcr region files are not supported, skipping
+101907911: .mca$Skipping obsolete data file
+
+## OFFSET 101915544
+101915244: aft:spawner_blocks_work
+101915268: spectatorsGenerateChunks
+101915293: tntExplodes
+101915305: minecraft:tnt_explodes
+101915328: tntExplosionDropDecay"minecraft:tnt_explosion_drop_decay
+101915385: universalAnger
+101915400: minecraft:universal_anger
+101915426: waterSourceConversion!minecraft:water_source_conversion
+101915482: dataPack.
+101915492: .name
+101915498: Could not write profile data!
+101915528:  settings)
+101915540:  #  Eaglercraft 26.2 profile backup - "
+101915582:  #  Contains: profile
+101915604: -backup.epk
+101915616: /proc/sys/net/core/somaxconn io.netty.net.somaxconn.trySysctl
+101915678: kern.ipc.somaxconn
+101915697: kern.ipc.soacceptqueue<Failed to get SOMAXCONN from sysctl and file {}. Default: {}
+101915781: Generating mipmaps for frame
+101915810: Frame being iterated
+101915831: Sprite name
