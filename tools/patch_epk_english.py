@@ -247,7 +247,10 @@ def main():
     if chinese:
         Path(sys.argv[4]).write_text("\n".join(f"{k} = {v}" for k,v in chinese),encoding="utf-8")
         raise SystemExit(f"{len(chinese)} Chinese-valued keys remain")
-    replacements={mc:encode_json(merged),ea:f22[ea]}
+    eagler_en=json.loads(f22[ea].decode("utf-8-sig"))
+    eagler_en["eagler.menu.brand"]="Minecraft 26.3"
+    eagler_en["eagler.menu.rewrittenBy"]=""
+    replacements={mc:encode_json(merged),ea:encode_json(eagler_en)}
     rebuild(epk23,replacements,sys.argv[3])
     # round-trip validation
     chk=parse_epk(sys.argv[3]); cf=files(chk)
@@ -257,10 +260,15 @@ def main():
     assert cm["menu.multiplayer"]=="Multiplayer"
     assert not any("\u3400"<=c<="\u9fff" for v in cm.values() for c in str(v))
     assert not any("\u3400"<=c<="\u9fff" for v in ce.values() for c in str(v))
+    assert ce["eagler.menu.brand"]=="Minecraft 26.3"
+    assert ce["eagler.menu.rewrittenBy"]==""
     Path(sys.argv[4]).write_text(
       f"minecraft keys: {len(cm)}\neagler keys: {len(ce)}\nextra 26.3 keys translated: {len(extras)}\n"
       f"menu.singleplayer: {cm['menu.singleplayer']}\nmenu.multiplayer: {cm['menu.multiplayer']}\n"
-      f"menu.options: {cm.get('menu.options')}\nChinese codepoints remaining: 0\n",
+      f"menu.options: {cm.get('menu.options')}\n"
+      f"eagler.menu.brand: {ce['eagler.menu.brand']}\n"
+      f"eagler.menu.rewrittenBy: {ce['eagler.menu.rewrittenBy']!r}\n"
+      f"Chinese codepoints remaining: 0\n",
       encoding="utf-8")
 
 if __name__=="__main__": main()
