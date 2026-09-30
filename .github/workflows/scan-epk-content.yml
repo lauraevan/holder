@@ -1,0 +1,25 @@
+name: Scan corrected EPK content
+on:
+  push:
+    paths:
+      - 'tools/scan_epk_content.py'
+      - '.github/workflows/scan-epk-content.yml'
+permissions:
+  contents: write
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Scan corrected 26.3 pack
+        run: |
+          python3 tools/scan_epk_content.py \
+            preview/26.3-asset-swap/eag26.3-assets-en-v1.epk \
+            preview/26.3-asset-swap/epk-content-scan.txt
+      - name: Commit report
+        run: |
+          git config user.name 'testbuild-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add preview/26.3-asset-swap/epk-content-scan.txt
+          git diff --cached --quiet || git commit -m 'Scan corrected 26.3 EPK content'
+          git push
