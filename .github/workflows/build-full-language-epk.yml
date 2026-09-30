@@ -1,0 +1,34 @@
+name: Build full-language 26.3 EPK
+on:
+  push:
+    paths:
+      - 'tools/build_full_language_epk.py'
+      - '.github/workflows/build-full-language-epk.yml'
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download pinned source and English Eagler baseline
+        run: |
+          set -euo pipefail
+          base='https://raw.githubusercontent.com/Enchantment-Niko/mcjs/bc586558628e2d7ef8ea1cebf198495625619eb2/wasm-loader'
+          curl -fL "$base/26.3/eag26.3-assets.epk" -o /tmp/26.3.epk
+          curl -fL "$base/26.2/eag26.2-assets.epk" -o /tmp/26.2.epk
+      - name: Overlay every official Minecraft 26.3 language
+        run: |
+          set -euo pipefail
+          python3 tools/build_full_language_epk.py \
+            /tmp/26.3.epk /tmp/26.2.epk \
+            preview/26.3-asset-swap/eag26.3-assets-all-languages.epk \
+            preview/26.3-asset-swap/languages-report.json
+          sha256sum preview/26.3-asset-swap/eag26.3-assets-all-languages.epk
+      - name: Commit multilingual pack
+        run: |
+          git config user.name 'testbuild-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add preview/26.3-asset-swap/eag26.3-assets-all-languages.epk preview/26.3-asset-swap/languages-report.json
+          git diff --cached --quiet || git commit -m 'Add all official Minecraft 26.3 languages'
+          git push
