@@ -1,0 +1,33 @@
+name: Build English 26.3 assets EPK
+on:
+  push:
+    paths:
+      - 'tools/patch_epk_english.py'
+      - '.github/workflows/build-english-epk.yml'
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download pinned source packs
+        run: |
+          set -euo pipefail
+          base='https://raw.githubusercontent.com/Enchantment-Niko/mcjs/bc586558628e2d7ef8ea1cebf198495625619eb2/wasm-loader'
+          curl -fL "$base/26.2/eag26.2-assets.epk" -o /tmp/26.2.epk
+          curl -fL "$base/26.3/eag26.3-assets.epk" -o /tmp/26.3.epk
+      - name: Rebuild 26.3 pack with English resources
+        run: |
+          set -euo pipefail
+          python3 tools/patch_epk_english.py /tmp/26.2.epk /tmp/26.3.epk \
+            preview/26.3-asset-swap/eag26.3-assets-en-v1.epk \
+            preview/26.3-asset-swap/english-epk-report.txt
+          sha256sum preview/26.3-asset-swap/eag26.3-assets-en-v1.epk
+      - name: Commit corrected pack
+        run: |
+          git config user.name 'testbuild-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add preview/26.3-asset-swap/eag26.3-assets-en-v1.epk preview/26.3-asset-swap/english-epk-report.txt
+          git diff --cached --quiet || git commit -m 'Add English-corrected 26.3 assets EPK'
+          git push
