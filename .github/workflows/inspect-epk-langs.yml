@@ -1,0 +1,29 @@
+name: Inspect EPK language files
+on:
+  push:
+    paths:
+      - 'tools/epk_lang_report.py'
+      - '.github/workflows/inspect-epk-langs.yml'
+permissions:
+  contents: write
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download pinned EPKs
+        run: |
+          set -euo pipefail
+          base='https://raw.githubusercontent.com/Enchantment-Niko/mcjs/bc586558628e2d7ef8ea1cebf198495625619eb2/wasm-loader'
+          curl -fL "$base/26.2/eag26.2-assets.epk" -o /tmp/26.2.epk
+          curl -fL "$base/26.3/eag26.3-assets.epk" -o /tmp/26.3.epk
+      - name: Inspect language resources
+        run: |
+          python3 tools/epk_lang_report.py /tmp/26.2.epk /tmp/26.3.epk preview/26.3-asset-swap/epk-lang-report.txt
+      - name: Commit report
+        run: |
+          git config user.name 'testbuild-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add preview/26.3-asset-swap/epk-lang-report.txt
+          git diff --cached --quiet || git commit -m 'Inspect 26.2 vs 26.3 EPK language resources'
+          git push
