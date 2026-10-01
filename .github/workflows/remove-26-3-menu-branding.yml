@@ -7,6 +7,9 @@ on:
       - '.github/workflows/remove-26-3-menu-branding.yml'
 permissions:
   contents: write
+concurrency:
+  group: remove-26-3-menu-branding
+  cancel-in-progress: true
 jobs:
   patch:
     runs-on: ubuntu-latest
