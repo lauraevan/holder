@@ -173,7 +173,7 @@ def main():
     # rewritten-by line for the compact Minecraft 26.3 label.
     eagler=json.loads(base_files["assets/eagler/lang/en_us.json"].decode("utf-8-sig"))
     eagler["eagler.menu.brand"]=""
-    eagler["eagler.menu.rewrittenBy"]="Minecraft 26.3"
+    eagler["eagler.menu.rewrittenBy"]=""
     eagler_bytes=encode_json(eagler)
 
     replacements={}
@@ -207,7 +207,7 @@ def main():
         if p not in fm: raise RuntimeError("rebuilt EPK missing "+p)
     ce=json.loads(fm["assets/eagler/lang/en_us.json"].decode("utf-8"))
     if ce.get("eagler.menu.brand")!="": raise RuntimeError("brand first line was not cleared")
-    if ce.get("eagler.menu.rewrittenBy")!="Minecraft 26.3": raise RuntimeError("lower title label mismatch")
+    if ce.get("eagler.menu.rewrittenBy")!="": raise RuntimeError("brand second line was not cleared")
 
     # Count official locale resources actually present.
     present=[c for c in codes if f"assets/minecraft/lang/{c}.json" in fm]
