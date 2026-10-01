@@ -169,10 +169,9 @@ def main():
         if required not in codes:
             raise RuntimeError("official 26.3 language metadata is missing "+required)
 
-    # Title-screen spacing request: suppress first line and use the former
-    # rewritten-by line for the compact Minecraft 26.3 label.
+    # Keep both custom title-screen branding rows consistent with the finished build.
     eagler=json.loads(base_files["assets/eagler/lang/en_us.json"].decode("utf-8-sig"))
-    eagler["eagler.menu.brand"]=""
+    eagler["eagler.menu.brand"]="Minecraft 26.3"
     eagler["eagler.menu.rewrittenBy"]="Minecraft 26.3"
     eagler_bytes=encode_json(eagler)
 
@@ -206,8 +205,8 @@ def main():
         p=f"assets/minecraft/lang/{code}.json"
         if p not in fm: raise RuntimeError("rebuilt EPK missing "+p)
     ce=json.loads(fm["assets/eagler/lang/en_us.json"].decode("utf-8"))
-    if ce.get("eagler.menu.brand")!="": raise RuntimeError("brand first line was not cleared")
-    if ce.get("eagler.menu.rewrittenBy")!="Minecraft 26.3": raise RuntimeError("lower title label mismatch")
+    if ce.get("eagler.menu.brand")!="Minecraft 26.3": raise RuntimeError("brand first line mismatch")
+    if ce.get("eagler.menu.rewrittenBy")!="Minecraft 26.3": raise RuntimeError("brand second line mismatch")
 
     # Count official locale resources actually present.
     present=[c for c in codes if f"assets/minecraft/lang/{c}.json" in fm]

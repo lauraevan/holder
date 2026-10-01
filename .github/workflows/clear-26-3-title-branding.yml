@@ -1,0 +1,31 @@
+name: Clear 26.3 title branding
+on:
+  push:
+    paths:
+      - 'tools/clear_26_3_title_branding.py'
+      - '.github/workflows/clear-26-3-title-branding.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: clear-26-3-title-branding
+  cancel-in-progress: true
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Clear title branding in all Eagler locales
+        run: |
+          python3 tools/clear_26_3_title_branding.py \
+            preview/26.3-asset-swap/eag26.3-assets-all-languages.epk \
+            preview/26.3-asset-swap/eag26.3-assets-all-languages.epk \
+            preview/26.3-asset-swap/title-branding-clear-report.json
+      - name: Commit cleaned asset pack
+        run: |
+          git config user.name 'menu-polish-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add preview/26.3-asset-swap/eag26.3-assets-all-languages.epk preview/26.3-asset-swap/title-branding-clear-report.json
+          git diff --cached --quiet || git commit -m 'Remove Joey branding from Minecraft 26.3 menu'
+          git pull --rebase
+          git push
