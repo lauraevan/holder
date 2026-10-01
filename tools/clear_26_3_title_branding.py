@@ -23,11 +23,11 @@ for name, data in fm.items():
         "eagler.menu.rewrittenBy": obj.get("eagler.menu.rewrittenBy"),
     }
     touched = False
-    if "eagler.menu.brand" in obj and obj.get("eagler.menu.brand") != "":
-        obj["eagler.menu.brand"] = ""
+    if "eagler.menu.brand" in obj and obj.get("eagler.menu.brand") != "Minecraft 26.3":
+        obj["eagler.menu.brand"] = "Minecraft 26.3"
         touched = True
-    if "eagler.menu.rewrittenBy" in obj and obj.get("eagler.menu.rewrittenBy") != "":
-        obj["eagler.menu.rewrittenBy"] = ""
+    if "eagler.menu.rewrittenBy" in obj and obj.get("eagler.menu.rewrittenBy") != "Minecraft 26.3":
+        obj["eagler.menu.rewrittenBy"] = "Minecraft 26.3"
         touched = True
     if touched:
         replacements[name] = encode_json(obj)
@@ -45,15 +45,15 @@ for name, data in check.items():
     except Exception:
         continue
     for key in ("eagler.menu.brand", "eagler.menu.rewrittenBy"):
-        if key in obj and obj.get(key) != "":
+        if key in obj and obj.get(key) != "Minecraft 26.3":
             left.append({"file": name, "key": key, "value": obj.get(key)})
 if left:
-    raise SystemExit("branding remained: " + json.dumps(left[:20], ensure_ascii=False))
+    raise SystemExit("branding mismatch: " + json.dumps(left[:20], ensure_ascii=False))
 
 report.write_text(json.dumps({
     "changed_locale_files": len(changed),
     "changed": changed,
-    "remaining_nonblank_branding_keys": left,
+    "remaining_branding_mismatches": left,
     "output_bytes": out.stat().st_size
 }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 print("changed locale files:", len(changed))
