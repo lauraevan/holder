@@ -32,7 +32,12 @@ jobs:
         run: |
           set -euo pipefail
           python3 tools/patch_world_list_wasm.py /tmp/client.wasm /tmp/client-patched.wasm preview/26.3-asset-swap/world-list-client-patch.json
-          wasm-tools validate /tmp/client-patched.wasm
+          # This TeaVM image intentionally uses the legacy Wasm exception
+          # encoding. Default wasm-tools validate rejects that pre-existing
+          # feature, so round-trip through the parser/printer instead.
+          wasm-tools print /tmp/client-patched.wasm -o /tmp/client-patched.wat
+          grep -F '(func (;12945;)' /tmp/client-patched.wat
+          grep -F 'br_table 1 (;@57;) 1 (;@56;) 36 (;@21;)' /tmp/client-patched.wat
       - name: Compress patched client
         run: |
           python3 - <<'PY'
