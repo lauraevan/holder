@@ -4,7 +4,7 @@
 <meta name="robots" content="noindex,nofollow">
 <script>
 (function(){
-  const p="testbuild-26.3-hybrid-serverfix-v1::";
+  const p="minecraft-26.3-singleplayer-fix-v2::";
   try {
     const idb=window.indexedDB;
     if(idb && typeof idb.open==="function"){
@@ -533,14 +533,14 @@ var TeaVM=TeaVM||{};TeaVM.wasmGC=TeaVM.wasmGC||(()=>{let n=new Map;let e=null;le
     window.eaglercraftXOpts = {
         container: "game_frame",
         lang: "en_us",
-        localStorageNamespace: "testbuild-26.3-hybrid-serverfix-v1",
+        localStorageNamespace: "minecraft-26.3-singleplayer-fix-v2",
         assetsURI: [
             { url: "assets.epk?v=141561971c510705", path: "" },
             { url: "sounds.epk?v=141561971c510705", path: "" }
         ],
         localesURI: "lang/",
-        worldsDB: "testbuild-worlds-hybrid-serverfix-v1",
-        resourcePacksDB: "testbuild-resourcepacks-hybrid-serverfix-v1",
+        worldsDB: "minecraft-26.3-worlds-v2",
+        resourcePacksDB: "minecraft-26.3-resourcepacks-v2",
         crashOnUncaughtExceptions: true,
         enableEPKVersionCheck: false,
         allowBootMenu: false,
@@ -588,13 +588,14 @@ var TeaVM=TeaVM||{};TeaVM.wasmGC=TeaVM.wasmGC||(()=>{let n=new Map;let e=null;le
 (async () => {
     "use strict";
     console.log("[Minecraft] Minecraft 26.3");
+    console.log("[Minecraft] Singleplayer worker: matching runtime generation, full bootstrap");
     window.__minecraftVersion = "Minecraft 26.3";
 
     const FILE_MAP = {
         "eag-inline-decoder":       "https://raw.githubusercontent.com/Enchantment-Niko/mcjs/bc586558628e2d7ef8ea1cebf198495625619eb2/wasm-loader/26.2/eag26.2-decoder.wasm",
         "eag-inline-wasm-br":       "https://raw.githubusercontent.com/Enchantment-Niko/mcjs/bc586558628e2d7ef8ea1cebf198495625619eb2/wasm-loader/26.2/eag26.2-wasm-br.wasm",
         "eag-inline-mesh-wasm-br":  "https://raw.githubusercontent.com/Enchantment-Niko/mcjs/bc586558628e2d7ef8ea1cebf198495625619eb2/wasm-loader/26.2/eag26.2-mesh-wasm-br.wasm",
-        "eag-inline-server-wasm-br":"https://raw.githubusercontent.com/Enchantment-Niko/mcjs/bc586558628e2d7ef8ea1cebf198495625619eb2/wasm-loader/26.3/eag26.3-server-wasm-br.wasm",
+        "eag-inline-server-wasm-br":"https://raw.githubusercontent.com/Enchantment-Niko/mcjs/bc586558628e2d7ef8ea1cebf198495625619eb2/wasm-loader/26.2/eag26.2-server-wasm-br.wasm",
         "eag-inline-assets":        "https://raw.githubusercontent.com/lauraevan/holder/3f2f9e1a72541893f5f924565002f5ebfbfa4317/preview/26.3-asset-swap/eag26.3-assets-all-languages.epk",
         "eag-inline-sounds":        "https://raw.githubusercontent.com/Enchantment-Niko/mcjs/bc586558628e2d7ef8ea1cebf198495625619eb2/wasm-loader/26.2/eag26.2-sounds.epk"
     };
@@ -834,7 +835,7 @@ var TeaVM=TeaVM||{};TeaVM.wasmGC=TeaVM.wasmGC||(()=>{let n=new Map;let e=null;le
         <div class="phone" aria-hidden="true"></div>
         <div><strong>Rotate your device</strong>Eaglercraft requires landscape mode on mobile devices.</div>
     </div>
-<div id="assetSwapBadge"><span>Minecraft 26.3 preview</span><button id="assetSwapClose" aria-label="Dismiss">×</button></div>
+<div id="assetSwapBadge"><span>Minecraft 26.3 singleplayer fix</span><button id="assetSwapClose" aria-label="Dismiss">×</button></div>
 <script>
 console.log("[testbuild] 26.2 runtime + modified 26.3 assets.epk");
 document.getElementById("assetSwapClose")?.addEventListener("click",()=>document.getElementById("assetSwapBadge")?.remove());
