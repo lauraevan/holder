@@ -1,0 +1,29 @@
+name: Inspect native profile menu WASM
+on:
+  push:
+    paths:
+      - 'tools/inspect_profile_wasm.py'
+      - '.github/workflows/inspect-profile-wasm.yml'
+permissions:
+  contents: write
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install tools
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet brotli
+          curl -fL --retry 5 https://github.com/bytecodealliance/wasm-tools/releases/download/v1.219.1/wasm-tools-1.219.1-x86_64-linux.tar.gz -o /tmp/wasm-tools.tgz
+          tar xzf /tmp/wasm-tools.tgz -C /tmp
+          sudo cp /tmp/wasm-tools-1.219.1-x86_64-linux/wasm-tools /usr/local/bin/wasm-tools
+      - name: Inspect profile menu
+        run: python3 tools/inspect_profile_wasm.py
+      - name: Commit report
+        run: |
+          git config user.name 'profile-wasm-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add preview/26.3-asset-swap/profile-wasm-report.json preview/26.3-asset-swap/profile-relevant-26.2.wat preview/26.3-asset-swap/profile-relevant-26.3.wat
+          git diff --cached --quiet || git commit -m 'Map native Edit Profile menu functions'
+          git push
