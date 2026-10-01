@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/",
-      "destination": "/preview/26.3-asset-swap/index.html"
+      "destination": "/preview/26.3-full/index.html"
     }
   ]
 }
