@@ -104,6 +104,56 @@ def main():
     assert not re.search(r"[一-鿿]", html), "untranslated UI text left"
     html = html.replace("<title>Eaglercraft 26.3 Fixed</title>", "<title>Minecraft 26.3</title>")
 
+
+    # Mobile fast-start keeps all required resource packs present so Java boot
+    # cannot stall during resource initialization. Mobile still skips the eager
+    # mesh-worker compile; the integrated-server Wasm remains lazy as before.
+    opts_old = '''\t\twindow.eaglercraftXOpts = {
+\t\t\tcontainer: "game_frame",
+\t\t\tassetsURI: [
+\t\t\t\t{ url: "assets.epk?v=49cbfb0a01b2374b", path: "" },
+\t\t\t\t{ url: "sounds.epk?v=49cbfb0a01b2374b", path: "" }
+\t\t\t],
+'''
+    opts_new = '''\t\tvar mobileFastStart = /[?&]mobilefast=1(?:&|$)/.test(window.location.search)
+\t\t\t|| (!/[?&]fullboot=1(?:&|$)/.test(window.location.search)
+\t\t\t\t&& (/(Android|iPhone|iPad|iPod|Mobile)/i.test(navigator.userAgent)
+\t\t\t\t\t|| (window.matchMedia && window.matchMedia("(pointer:coarse)").matches)));
+\t\twindow.__eaglerMobileFastStart = mobileFastStart;
+\t\tvar startupAssets = [
+\t\t\t{ url: "assets.epk?v=49cbfb0a01b2374b", path: "" },
+\t\t\t{ url: "sounds.epk?v=49cbfb0a01b2374b", path: "" }
+\t\t];
+\t\twindow.eaglercraftXOpts = {
+\t\t\tcontainer: "game_frame",
+\t\t\tassetsURI: startupAssets,
+'''
+    if opts_old not in html:
+        raise RuntimeError("mobile opts insertion point missing")
+    html = html.replace(opts_old, opts_new, 1)
+    html = html.replace(
+        '''\t\t\t\tmeshWorkers: window.location.search.indexOf("singlethread") < 0
+\t\t\t\t\t&& window.location.search.indexOf("nomesh") < 0,''',
+        '''\t\t\t\tmeshWorkers: !mobileFastStart
+\t\t\t\t\t&& window.location.search.indexOf("singlethread") < 0
+\t\t\t\t\t&& window.location.search.indexOf("nomesh") < 0,''',
+        1
+    )
+
+    mobile_initial = (
+        payloads["eag-inline-decoder"]["size"]
+        + payloads["eag-inline-wasm-br"]["size"]
+        + payloads[ASSETS_ID]["size"]
+        + payloads["eag-inline-sounds"]["size"]
+    )
+    desktop_initial = mobile_initial + payloads["eag-inline-mesh-wasm-br"]["size"]
+    html = re.sub(
+        r'var total = Number\("\d+"\) \|\| 0;',
+        'var total = Number(window.__eaglerMobileFastStart ? "%d" : "%d") || 0;' % (mobile_initial, desktop_initial),
+        html,
+        count=1
+    )
+
     (out_dir / "index.html").write_text(html, encoding="utf-8")
     print("index.html", len(html), "bytes; payload total", total)
 

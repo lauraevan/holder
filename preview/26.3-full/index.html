@@ -586,12 +586,18 @@ window.__eaglerWasmServerWorkerBootstrapURL = URL.createObjectURL(new Blob(["(fu
 		// The hosted release may point this at a signed bundle on a separate
 		// large-file origin. An empty value keeps the preview download disabled.
 		window.eaglercraftXIwaBundleURL = "https://pub-6efd573bb3804e0ab441fa92524b722a.r2.dev/iwa/eaglercraft-26.2-0.5.0-c9bea6a24a3b.swbn";
+		var mobileFastStart = /[?&]mobilefast=1(?:&|$)/.test(window.location.search)
+			|| (!/[?&]fullboot=1(?:&|$)/.test(window.location.search)
+				&& (/(Android|iPhone|iPad|iPod|Mobile)/i.test(navigator.userAgent)
+					|| (window.matchMedia && window.matchMedia("(pointer:coarse)").matches)));
+		window.__eaglerMobileFastStart = mobileFastStart;
+		var startupAssets = [
+			{ url: "assets.epk?v=49cbfb0a01b2374b", path: "" },
+			{ url: "sounds.epk?v=49cbfb0a01b2374b", path: "" }
+		];
 		window.eaglercraftXOpts = {
 			container: "game_frame",
-			assetsURI: [
-				{ url: "assets.epk?v=49cbfb0a01b2374b", path: "" },
-				{ url: "sounds.epk?v=49cbfb0a01b2374b", path: "" }
-			],
+			assetsURI: startupAssets,
 			localesURI: "lang/",
 			worldsDB: "worlds",
 			resourcePacksDB: "resourcePacks",
@@ -605,7 +611,8 @@ window.__eaglerWasmServerWorkerBootstrapURL = URL.createObjectURL(new Blob(["(fu
 			// ?singlethread disables all workers; ?nomesh disables mesh workers.
 			singleThreadMode: true,
 				serverWorker: window.location.search.indexOf("singlethread") < 0,
-				meshWorkers: window.location.search.indexOf("singlethread") < 0
+				meshWorkers: !mobileFastStart
+					&& window.location.search.indexOf("singlethread") < 0
 					&& window.location.search.indexOf("nomesh") < 0,
 				meshWorkerVerify: false,
 				perfDebug: window.__eaglerPerfEnabled,
@@ -628,7 +635,7 @@ window.__eaglerWasmServerWorkerBootstrapURL = URL.createObjectURL(new Blob(["(fu
 			} catch (e) {}
 		};
 		(function () {
-			var total = Number("85512050") || 0;
+			var total = Number(window.__eaglerMobileFastStart ? "73073681" : "75916173") || 0;
 			var loadedByUrl = Object.create(null);
 			window.__eaglerAssetDownloadProgress = function (url, loaded) {
 				loadedByUrl[String(url).replace(/[?#].*$/, "")] = Math.max(0, Number(loaded) || 0);
