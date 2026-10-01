@@ -251,6 +251,27 @@ def main():
          "                        } finally { clearInterval(tick); }\n"
          "                      }\n")
 
+    # iPad Safari compiles the client but then throws "WebAssembly.Module.imports
+    # unable to produce import descriptors for the given module" from TeaVM's
+    # memory-import check, in the page and in both worker runtimes. That check
+    # only asks whether the module imports teavm.memory; none of the 26.3 images
+    # does (verified below), so treat a failing Module.imports as "no imports".
+    imports_check = "function f(e){return WebAssembly.Module.imports(e).findIndex("
+    if html.count(imports_check) != 3:
+        raise RuntimeError("expected 3 TeaVM runtime copies, found %d" % html.count(imports_check))
+    html = html.replace(imports_check,
+                        "function f(e){let i;try{i=WebAssembly.Module.imports(e)}catch(x){i=[]}return i.findIndex(")
+    subprocess.run(["node", "-e", """
+const fs = require('fs'), zlib = require('zlib');
+for (const file of process.argv.slice(1)) {
+  const module = new WebAssembly.Module(zlib.brotliDecompressSync(fs.readFileSync(file)), {builtins: ['js-string']});
+  if (WebAssembly.Module.imports(module).some(i => i.kind === 'memory')) {
+    throw new Error(file + ' imports memory; the Safari Module.imports fallback would be wrong');
+  }
+}
+"""] + [str(out_dir / PAYLOAD_FILES[p]) for p in ("eag-inline-wasm-br", "eag-inline-mesh-wasm-br",
+                                                  "eag-inline-server-wasm-br")], check=True)
+
     # On short (landscape phone) screens the 100vmin splash image reached the
     # bottom-pinned status line and the two overlapped; leave room for it.
     swap("\t\t\twidth: min(100vmin, 512px);\n\t\t\theight: min(100vmin, 512px);",
