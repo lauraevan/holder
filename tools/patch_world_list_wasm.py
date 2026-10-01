@@ -2,17 +2,13 @@
 import argparse, hashlib, json
 from pathlib import Path
 
-# The exact function was independently identified from the current canonical
-# 26.2 image by its use of "mco.upload.select.world.none".
+# Identified independently from the current canonical 26.2 WAT/model.
 ABSOLUTE_FUNCTION_INDEX = 12945
-DEFINED_ORDINAL = 12847
+NO_WORLDS_STRING_GLOBAL = 156617
 
-# Wasm encoding of:
-#   br_table 0 1 36
-# SINGLEPLAYER ordinal 0 auto-opens CreateWorldScreen.
+# Wasm binary for: br_table 0 1 36
 OLD = bytes.fromhex("0e02000124")
-# Redirect ordinal 0 to the same empty-list branch as ordinal 1:
-#   br_table 1 1 36
+# Wasm binary for: br_table 1 1 36
 NEW = bytes.fromhex("0e02010124")
 
 def sha(b):
@@ -30,8 +26,19 @@ def read_uleb(data, pos):
         if not (b & 0x80):
             return value, pos
         shift += 7
-        if shift > 35:
+        if shift > 70:
             raise ValueError("ULEB too large")
+
+def encode_uleb(value):
+    out=bytearray()
+    while True:
+        b=value & 0x7f
+        value >>= 7
+        if value:
+            out.append(b | 0x80)
+        else:
+            out.append(b)
+            return bytes(out)
 
 def find_section(data, wanted):
     if data[:8] != b"\0asm\x01\0\0\0":
@@ -50,67 +57,80 @@ def find_section(data, wanted):
         pos = end
     raise ValueError(f"section {wanted} not found")
 
-def locate_defined_body(data, ordinal):
-    start, end = find_section(data, 10)
-    pos = start
-    count, pos = read_uleb(data, pos)
-    if ordinal < 0 or ordinal >= count:
-        raise IndexError(f"defined ordinal {ordinal} outside code count {count}")
-    for i in range(count):
-        body_size, body_start = read_uleb(data, pos)
-        body_end = body_start + body_size
-        if body_end > end:
-            raise EOFError(f"function body {i} extends past code section")
-        if i == ordinal:
-            return body_start, body_end
-        pos = body_end
-    raise AssertionError("unreachable")
+def iter_code_bodies(data):
+    start, end=find_section(data,10)
+    pos=start
+    count,pos=read_uleb(data,pos)
+    for ordinal in range(count):
+        body_size,body_start=read_uleb(data,pos)
+        body_end=body_start+body_size
+        if body_end>end:
+            raise EOFError(f"function body {ordinal} extends past code section")
+        yield ordinal,body_start,body_end
+        pos=body_end
 
 def main():
     ap=argparse.ArgumentParser()
-    ap.add_argument("src", type=Path)
-    ap.add_argument("dst", type=Path)
-    ap.add_argument("report", type=Path)
+    ap.add_argument("src",type=Path)
+    ap.add_argument("dst",type=Path)
+    ap.add_argument("report",type=Path)
     a=ap.parse_args()
 
-    data=bytearray(a.src.read_bytes())
-    body_start, body_end = locate_defined_body(data, DEFINED_ORDINAL)
-    body=bytes(data[body_start:body_end])
+    original=a.src.read_bytes()
+    data=bytearray(original)
 
-    hits=[]
-    pos=0
-    while True:
-        i=body.find(OLD,pos)
-        if i<0:
-            break
-        hits.append(i)
-        pos=i+1
-    if len(hits)!=1:
+    # global.get opcode is 0x23 followed by the global index as ULEB128.
+    string_anchor=b"\x23"+encode_uleb(NO_WORLDS_STRING_GLOBAL)
+    candidates=[]
+    for ordinal,start,end in iter_code_bodies(data):
+        body=bytes(data[start:end])
+        branch_hits=[]
+        p=0
+        while True:
+            i=body.find(OLD,p)
+            if i<0: break
+            branch_hits.append(i)
+            p=i+1
+        if string_anchor in body and branch_hits:
+            candidates.append({
+                "ordinal":ordinal,
+                "start":start,
+                "end":end,
+                "branch_hits":branch_hits,
+                "sha256":sha(body)
+            })
+
+    if len(candidates)!=1:
         raise SystemExit(
-            f"function {ABSOLUTE_FUNCTION_INDEX} expected exactly one "
-            f"br_table 0,1,36 encoding, found {hits}; "
-            f"body_offset={body_start} size={len(body)} sha256={sha(body)}"
+            "expected one code body containing both the NoWorldsEntry string "
+            f"global and br_table 0,1,36, found {candidates}"
         )
 
-    rel=hits[0]
-    absolute=body_start+rel
+    target=candidates[0]
+    if len(target["branch_hits"])!=1:
+        raise SystemExit(f"target body has ambiguous branch sites: {target}")
+
+    rel=target["branch_hits"][0]
+    absolute=target["start"]+rel
     data[absolute:absolute+len(OLD)]=NEW
 
-    patched_body=bytes(data[body_start:body_end])
-    if patched_body.find(OLD) != -1:
+    patched_body=bytes(data[target["start"]:target["end"]])
+    if OLD in patched_body:
         raise SystemExit("old empty-world branch still present after patch")
-    if patched_body.count(NEW) < 1:
-        raise SystemExit("patched empty-world branch not present")
+    if NEW not in patched_body:
+        raise SystemExit("new empty-world branch missing after patch")
 
     a.dst.write_bytes(data)
     report={
-        "function":ABSOLUTE_FUNCTION_INDEX,
-        "defined_ordinal":DEFINED_ORDINAL,
-        "function_offset":body_start,
-        "function_size":len(body),
-        "original_function_sha256":sha(body),
+        "identified_absolute_function":ABSOLUTE_FUNCTION_INDEX,
+        "discovered_defined_ordinal":target["ordinal"],
+        "function_offset":target["start"],
+        "function_size":target["end"]-target["start"],
+        "no_worlds_string_global":NO_WORLDS_STRING_GLOBAL,
+        "string_anchor_bytes":string_anchor.hex(),
+        "original_function_sha256":target["sha256"],
         "patched_function_sha256":sha(patched_body),
-        "original_module_sha256":sha(a.src.read_bytes()),
+        "original_module_sha256":sha(original),
         "patched_module_sha256":sha(bytes(data)),
         "relative_patch_offset":rel,
         "absolute_patch_offset":absolute,
