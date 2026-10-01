@@ -105,6 +105,7 @@ def main():
     html = html.replace("<title>Eaglercraft 26.3 Fixed</title>", "<title>Minecraft 26.3</title>")
 
 
+    # iPadOS Safari reports a Macintosh UA, so also treat multi-touch Macs as mobile.
     # Mobile fast-start keeps all required resource packs present so Java boot
     # cannot stall during resource initialization. Mobile still skips the eager
     # mesh-worker compile; the integrated-server Wasm remains lazy as before.
@@ -118,6 +119,7 @@ def main():
     opts_new = '''\t\tvar mobileFastStart = /[?&]mobilefast=1(?:&|$)/.test(window.location.search)
 \t\t\t|| (!/[?&]fullboot=1(?:&|$)/.test(window.location.search)
 \t\t\t\t&& (/(Android|iPhone|iPad|iPod|Mobile)/i.test(navigator.userAgent)
+\t\t\t\t\t|| (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1)
 \t\t\t\t\t|| (window.matchMedia && window.matchMedia("(pointer:coarse)").matches)));
 \t\twindow.__eaglerMobileFastStart = mobileFastStart;
 \t\tvar startupAssets = [
@@ -153,6 +155,44 @@ def main():
         html,
         count=1
     )
+
+    # iPad/phone Safari stalled right after the client download ("18 MB"): the
+    # page held the decoder worker's heap, the decompressed 102 MB image and a
+    # Response copy of it while Safari compiled the module. On mobile, release
+    # the decoder as soon as it finishes, compile straight from the bytes, and
+    # show what is happening instead of a frozen download counter.
+    def swap(old, new):
+        nonlocal html
+        if html.count(old) != 1:
+            raise RuntimeError("mobile compile anchor missing: " + old[:60])
+        html = html.replace(old, new, 1)
+
+    swap("          if (!jobs.size) idleTimer = setTimeout(stopDecoder, 250);",
+         "          if (!jobs.size) {\n"
+         "            if (window.__eaglerMobileFastStart) stopDecoder();\n"
+         "            else idleTimer = setTimeout(stopDecoder, 250);\n"
+         "          }")
+    swap("  window.__eagReleaseInlineWasm = function (name) {",
+         "  // Hand the decompressed image to the compiler without a Response copy.\n"
+         "  window.__eagTakeWasmBytes = function (name) {\n"
+         "    const bytes = wasmCache.get(name) || decodePayload(wasmIds[name]).then(decompress);\n"
+         "    wasmCache.delete(name);\n"
+         "    return bytes;\n"
+         "  };\n"
+         "  window.__eagReleaseInlineWasm = function (name) {")
+    swap("                    async function compileImage(name) {\n",
+         "                    async function compileImage(name) {\n"
+         "                      if (window.__eaglerMobileFastStart) {\n"
+         "                        window.__eaglerBoot(60, 'Unpacking game files...');\n"
+         "                        let bytes = await window.__eagTakeWasmBytes(name);\n"
+         "                        const began = Date.now();\n"
+         "                        const tick = setInterval(function () {\n"
+         "                          window.__eaglerBoot(62, 'Preparing game... (' + Math.round((Date.now() - began) / 1000) + 's)');\n"
+         "                        }, 1000);\n"
+         "                        window.__eaglerBoot(62, 'Preparing game...');\n"
+         "                        try { return await WebAssembly.compile(bytes, {builtins:['js-string']}); }\n"
+         "                        finally { clearInterval(tick); bytes = null; }\n"
+         "                      }\n")
 
     (out_dir / "index.html").write_text(html, encoding="utf-8")
     print("index.html", len(html), "bytes; payload total", total)

@@ -87,7 +87,10 @@ var bytes=r&&r.memory?r.memory.buffer.byteLength:0;r=undefined;M=undefined;O=nul
           jobs.delete(d.id);
           if (d.error) job.reject(new Error(d.error));
           else job.resolve(new Uint8Array(d.bytes));
-          if (!jobs.size) idleTimer = setTimeout(stopDecoder, 250);
+          if (!jobs.size) {
+            if (window.__eaglerMobileFastStart) stopDecoder();
+            else idleTimer = setTimeout(stopDecoder, 250);
+          }
         };
         decoderWorker.onerror = function (event) {
           decoderFailed(new Error('Background decompression failed: ' + event.message));
@@ -147,6 +150,12 @@ var bytes=r&&r.memory?r.memory.buffer.byteLength:0;r=undefined;M=undefined;O=nul
     if (!wasmIds[name]) return originalFetch(input, init);
     if (!wasmCache.has(name)) wasmCache.set(name, decodePayload(wasmIds[name]).then(decompress));
     return wasmCache.get(name).then(raw => new Response(raw, {headers:{'Content-Type':'application/wasm'}}));
+  };
+  // Hand the decompressed image to the compiler without a Response copy.
+  window.__eagTakeWasmBytes = function (name) {
+    const bytes = wasmCache.get(name) || decodePayload(wasmIds[name]).then(decompress);
+    wasmCache.delete(name);
+    return bytes;
   };
   window.__eagReleaseInlineWasm = function (name) {
     if (name) wasmCache.delete(name); else wasmCache.clear();
@@ -589,6 +598,7 @@ window.__eaglerWasmServerWorkerBootstrapURL = URL.createObjectURL(new Blob(["(fu
 		var mobileFastStart = /[?&]mobilefast=1(?:&|$)/.test(window.location.search)
 			|| (!/[?&]fullboot=1(?:&|$)/.test(window.location.search)
 				&& (/(Android|iPhone|iPad|iPod|Mobile)/i.test(navigator.userAgent)
+					|| (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1)
 					|| (window.matchMedia && window.matchMedia("(pointer:coarse)").matches)));
 		window.__eaglerMobileFastStart = mobileFastStart;
 		var startupAssets = [
@@ -805,6 +815,17 @@ var TeaVM=TeaVM||{};TeaVM.wasmGC=TeaVM.wasmGC||(()=>{let n=new Map;let e=null;le
 					}
                     let module;
                     async function compileImage(name) {
+                      if (window.__eaglerMobileFastStart) {
+                        window.__eaglerBoot(60, 'Unpacking game files...');
+                        let bytes = await window.__eagTakeWasmBytes(name);
+                        const began = Date.now();
+                        const tick = setInterval(function () {
+                          window.__eaglerBoot(62, 'Preparing game... (' + Math.round((Date.now() - began) / 1000) + 's)');
+                        }, 1000);
+                        window.__eaglerBoot(62, 'Preparing game...');
+                        try { return await WebAssembly.compile(bytes, {builtins:['js-string']}); }
+                        finally { clearInterval(tick); bytes = null; }
+                      }
                       const url = name + '?v=jm-perf-1';
                       try {
                         return await WebAssembly.compileStreaming(fetch(url), {builtins:['js-string']});
