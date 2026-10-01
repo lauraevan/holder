@@ -18,7 +18,7 @@ for ver in ("26.2","26.3"):
     wanted={g:v for g,v in strings.items() if v in wanted_vals}
     funcs=[]
     for f in d["functions"]:
-        hits=[[int(g),strings[int(g)]] for g in f.get("strings",[]) if int(g) in wanted]
+        hits=[[int(pair[0]), pair[1]] for pair in f.get("strings",[]) if int(pair[0]) in wanted]
         if len(hits)>=2 or any(v=="Edit Profile" for _,v in hits):
             funcs.append({"fid":int(f["fid"]),"lines":f["lines"],"hits":hits,"calls":f["calls"],"allocs":f.get("allocs",[]),"p0type":f.get("p0type"),"type":f.get("type")})
     summary[ver]={"wanted":wanted,"functions":funcs}
