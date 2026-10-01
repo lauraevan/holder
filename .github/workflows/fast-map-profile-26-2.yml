@@ -1,0 +1,28 @@
+name: Fast map 26.2 profile menu
+on:
+  push:
+    paths:
+      - 'tools/fast_map_profile_26_2.py'
+      - '.github/workflows/fast-map-profile-26-2.yml'
+permissions:
+  contents: write
+jobs:
+  map:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install wasm-tools
+        run: |
+          python3 -m pip install --quiet brotli
+          curl -fL --retry 5 https://github.com/bytecodealliance/wasm-tools/releases/download/v1.219.1/wasm-tools-1.219.1-x86_64-linux.tar.gz -o /tmp/w.tgz
+          tar xzf /tmp/w.tgz -C /tmp
+          sudo cp /tmp/wasm-tools-1.219.1-x86_64-linux/wasm-tools /usr/local/bin/wasm-tools
+      - name: Map 26.2
+        run: python3 tools/fast_map_profile_26_2.py
+      - name: Commit map
+        run: |
+          git config user.name profile-map-bot
+          git config user.email actions@users.noreply.github.com
+          git add preview/26.3-asset-swap/profile-26.2-map.json
+          git diff --cached --quiet || git commit -m 'Map 26.2 native profile menu'
+          git push
