@@ -151,6 +151,7 @@ var bytes=r&&r.memory?r.memory.buffer.byteLength:0;r=undefined;M=undefined;O=nul
     if (!wasmCache.has(name)) wasmCache.set(name, decodePayload(wasmIds[name]).then(decompress));
     return wasmCache.get(name).then(raw => new Response(raw, {headers:{'Content-Type':'application/wasm'}}));
   };
+  window.__eagNativeFetch = originalFetch;
   // Hand the decompressed image to the compiler without a Response copy.
   window.__eagTakeWasmBytes = function (name) {
     const bytes = wasmCache.get(name) || decodePayload(wasmIds[name]).then(decompress);
@@ -645,7 +646,7 @@ window.__eaglerWasmServerWorkerBootstrapURL = URL.createObjectURL(new Blob(["(fu
 			} catch (e) {}
 		};
 		(function () {
-			var total = Number(window.__eaglerMobileFastStart ? "73073681" : "75916173") || 0;
+			var total = Number(window.__eaglerMobileFastStart ? "54243587" : "75916173") || 0;
 			var loadedByUrl = Object.create(null);
 			window.__eaglerAssetDownloadProgress = function (url, loaded) {
 				loadedByUrl[String(url).replace(/[?#].*$/, "")] = Math.max(0, Number(loaded) || 0);
@@ -816,15 +817,22 @@ var TeaVM=TeaVM||{};TeaVM.wasmGC=TeaVM.wasmGC||(()=>{let n=new Map;let e=null;le
                     let module;
                     async function compileImage(name) {
                       if (window.__eaglerMobileFastStart) {
-                        window.__eaglerBoot(60, 'Unpacking game files...');
-                        let bytes = await window.__eagTakeWasmBytes(name);
                         const began = Date.now();
                         const tick = setInterval(function () {
-                          window.__eaglerBoot(62, 'Preparing game... (' + Math.round((Date.now() - began) / 1000) + 's)');
+                          window.__eaglerBoot(62, 'Loading game... (' + Math.round((Date.now() - began) / 1000) + 's)');
                         }, 1000);
-                        window.__eaglerBoot(62, 'Preparing game...');
-                        try { return await WebAssembly.compile(bytes, {builtins:['js-string']}); }
-                        finally { clearInterval(tick); bytes = null; }
+                        window.__eaglerBoot(62, 'Loading game...');
+                        try {
+                          try {
+                            return await WebAssembly.compileStreaming(
+                              window.__eagNativeFetch("/preview/26.3-full/native/" + name), {builtins:['js-string']});
+                          } catch (nativeError) {
+                            window.__log.push('W:[mobile] native streaming compile failed (' + nativeError + '); unpacking in page');
+                            let bytes = await window.__eagTakeWasmBytes(name);
+                            try { return await WebAssembly.compile(bytes, {builtins:['js-string']}); }
+                            finally { bytes = null; }
+                          }
+                        } finally { clearInterval(tick); }
                       }
                       const url = name + '?v=jm-perf-1';
                       try {

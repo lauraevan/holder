@@ -142,13 +142,12 @@ def main():
         1
     )
 
-    mobile_initial = (
-        payloads["eag-inline-decoder"]["size"]
-        + payloads["eag-inline-wasm-br"]["size"]
-        + payloads[ASSETS_ID]["size"]
-        + payloads["eag-inline-sounds"]["size"]
-    )
-    desktop_initial = mobile_initial + payloads["eag-inline-mesh-wasm-br"]["size"]
+    # Mobile streams the client image through the native route below, so its
+    # download counter only covers the resource packs.
+    mobile_initial = payloads[ASSETS_ID]["size"] + payloads["eag-inline-sounds"]["size"]
+    desktop_initial = (mobile_initial + payloads["eag-inline-decoder"]["size"]
+                       + payloads["eag-inline-wasm-br"]["size"]
+                       + payloads["eag-inline-mesh-wasm-br"]["size"])
     html = re.sub(
         r'var total = Number\("\d+"\) \|\| 0;',
         'var total = Number(window.__eaglerMobileFastStart ? "%d" : "%d") || 0;' % (mobile_initial, desktop_initial),
@@ -156,11 +155,12 @@ def main():
         count=1
     )
 
-    # iPad/phone Safari stalled right after the client download ("18 MB"): the
-    # page held the decoder worker's heap, the decompressed 102 MB image and a
-    # Response copy of it while Safari compiled the module. On mobile, release
-    # the decoder as soon as it finishes, compile straight from the bytes, and
-    # show what is happening instead of a frozen download counter.
+    # iPad Safari stalled right after the client download ("18 MB") while the
+    # page-side Wasm Brotli decoder unpacked the 102 MB image. vercel.json serves
+    # the same .wasm.bin files under native/ with Content-Encoding: br, so on
+    # mobile the browser decodes natively and compiles while streaming. If that
+    # route fails, fall back to unpacking in the page, releasing the decoder as
+    # soon as it finishes and compiling straight from the bytes.
     def swap(old, new):
         nonlocal html
         if html.count(old) != 1:
@@ -173,6 +173,7 @@ def main():
          "            else idleTimer = setTimeout(stopDecoder, 250);\n"
          "          }")
     swap("  window.__eagReleaseInlineWasm = function (name) {",
+         "  window.__eagNativeFetch = originalFetch;\n"
          "  // Hand the decompressed image to the compiler without a Response copy.\n"
          "  window.__eagTakeWasmBytes = function (name) {\n"
          "    const bytes = wasmCache.get(name) || decodePayload(wasmIds[name]).then(decompress);\n"
@@ -183,15 +184,22 @@ def main():
     swap("                    async function compileImage(name) {\n",
          "                    async function compileImage(name) {\n"
          "                      if (window.__eaglerMobileFastStart) {\n"
-         "                        window.__eaglerBoot(60, 'Unpacking game files...');\n"
-         "                        let bytes = await window.__eagTakeWasmBytes(name);\n"
          "                        const began = Date.now();\n"
          "                        const tick = setInterval(function () {\n"
-         "                          window.__eaglerBoot(62, 'Preparing game... (' + Math.round((Date.now() - began) / 1000) + 's)');\n"
+         "                          window.__eaglerBoot(62, 'Loading game... (' + Math.round((Date.now() - began) / 1000) + 's)');\n"
          "                        }, 1000);\n"
-         "                        window.__eaglerBoot(62, 'Preparing game...');\n"
-         "                        try { return await WebAssembly.compile(bytes, {builtins:['js-string']}); }\n"
-         "                        finally { clearInterval(tick); bytes = null; }\n"
+         "                        window.__eaglerBoot(62, 'Loading game...');\n"
+         "                        try {\n"
+         "                          try {\n"
+         "                            return await WebAssembly.compileStreaming(\n"
+         "                              window.__eagNativeFetch(" + json.dumps(base + "native/") + " + name), {builtins:['js-string']});\n"
+         "                          } catch (nativeError) {\n"
+         "                            window.__log.push('W:[mobile] native streaming compile failed (' + nativeError + '); unpacking in page');\n"
+         "                            let bytes = await window.__eagTakeWasmBytes(name);\n"
+         "                            try { return await WebAssembly.compile(bytes, {builtins:['js-string']}); }\n"
+         "                            finally { bytes = null; }\n"
+         "                          }\n"
+         "                        } finally { clearInterval(tick); }\n"
          "                      }\n")
 
     (out_dir / "index.html").write_text(html, encoding="utf-8")
