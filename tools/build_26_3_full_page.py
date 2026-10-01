@@ -197,26 +197,101 @@ def main():
          "    return bytes;\n"
          "  };\n"
          "  window.__eagReleaseInlineWasm = function (name) {")
+    # Each step is logged and, through __eaglerBoot, written to the crash journal,
+    # so a stuck or killed mobile load can be traced to download vs compile.
     swap("                    async function compileImage(name) {\n",
          "                    async function compileImage(name) {\n"
          "                      if (window.__eaglerMobileFastStart) {\n"
          "                        const began = Date.now();\n"
-         "                        const tick = setInterval(function () {\n"
-         "                          window.__eaglerBoot(62, 'Loading game... (' + Math.round((Date.now() - began) / 1000) + 's)');\n"
-         "                        }, 1000);\n"
-         "                        window.__eaglerBoot(62, 'Loading game...');\n"
+         "                        let phase = 'Downloading game', received = 0;\n"
+         "                        const step = function (what) {\n"
+         "                          window.__log.push('L:[mobile] ' + name + ': ' + what + ' at '\n"
+         "                            + ((Date.now() - began) / 1000).toFixed(1) + 's');\n"
+         "                        };\n"
+         "                        const show = function () {\n"
+         "                          window.__eaglerBoot(62, phase + '... ' + (received ? (received / 1048576).toFixed(1)\n"
+         "                            + ' MB, ' : '') + Math.round((Date.now() - began) / 1000) + 's');\n"
+         "                        };\n"
+         "                        const tick = setInterval(show, 1000);\n"
+         "                        show();\n"
          "                        try {\n"
          "                          try {\n"
-         "                            return await WebAssembly.compileStreaming(\n"
-         "                              window.__eagNativeFetch(" + json.dumps(base + "native/") + " + name), {builtins:['js-string']});\n"
+         "                            step('requesting native image');\n"
+         "                            const response = await window.__eagNativeFetch(" + json.dumps(base + "native/") + " + name);\n"
+         "                            if (!response.ok) throw new Error('HTTP ' + response.status);\n"
+         "                            step('response ' + response.headers.get('content-type'));\n"
+         "                            const reader = response.body.getReader();\n"
+         "                            const counted = new ReadableStream({ async pull(controller) {\n"
+         "                              const chunk = await reader.read();\n"
+         "                              if (chunk.done) {\n"
+         "                                phase = 'Compiling game';\n"
+         "                                step('downloaded ' + (received / 1048576).toFixed(1) + ' MB');\n"
+         "                                controller.close();\n"
+         "                                return;\n"
+         "                              }\n"
+         "                              received += chunk.value.length;\n"
+         "                              controller.enqueue(chunk.value);\n"
+         "                            } });\n"
+         "                            const compiled = await WebAssembly.compileStreaming(\n"
+         "                              new Response(counted, {headers: {'Content-Type': 'application/wasm'}}), {builtins:['js-string']});\n"
+         "                            step('compiled');\n"
+         "                            return compiled;\n"
          "                          } catch (nativeError) {\n"
-         "                            window.__log.push('W:[mobile] native streaming compile failed (' + nativeError + '); unpacking in page');\n"
+         "                            step('native streaming failed (' + nativeError + '); unpacking in page');\n"
+         "                            phase = 'Unpacking game'; received = 0;\n"
          "                            let bytes = await window.__eagTakeWasmBytes(name);\n"
-         "                            try { return await WebAssembly.compile(bytes, {builtins:['js-string']}); }\n"
-         "                            finally { bytes = null; }\n"
+         "                            phase = 'Compiling game';\n"
+         "                            step('unpacked');\n"
+         "                            try {\n"
+         "                              const compiled = await WebAssembly.compile(bytes, {builtins:['js-string']});\n"
+         "                              step('compiled');\n"
+         "                              return compiled;\n"
+         "                            } finally { bytes = null; }\n"
          "                          }\n"
          "                        } finally { clearInterval(tick); }\n"
          "                      }\n")
+
+    # On short (landscape phone) screens the 100vmin splash image reached the
+    # bottom-pinned status line and the two overlapped; leave room for it.
+    swap("\t\t\twidth: min(100vmin, 512px);\n\t\t\theight: min(100vmin, 512px);",
+         "\t\t\twidth: min(calc(100vmin - 64px), 512px);\n\t\t\theight: min(calc(100vmin - 64px), 512px);")
+
+    # On-screen loader trace for phones/tablets (or ?debug=1 anywhere): the
+    # current step, recent loader log lines, page errors, and where the previous
+    # attempt stopped if the tab was killed. Removed once the game is ready.
+    swap("</body>",
+         """<script>
+(function () {
+  if (!(window.__eaglerMobileFastStart || new URLSearchParams(location.search).get("debug") === "1")) return;
+  var box = document.createElement("div");
+  box.id = "eagler_loader_trace";
+  box.style.cssText = "position:fixed;left:8px;right:8px;top:8px;z-index:2147483647;max-height:40vh;"
+    + "overflow:hidden;background:rgba(0,0,0,.8);color:#9f9;font:11px/1.35 monospace;padding:6px 8px;"
+    + "border-radius:4px;white-space:pre-wrap;pointer-events:none";
+  var started = performance.now(), errors = [];
+  window.addEventListener("error", function (e) { errors.push("ERROR " + (e.message || e.error)); });
+  window.addEventListener("unhandledrejection", function (e) {
+    errors.push("REJECTED " + (e.reason && (e.reason.message || e.reason)));
+  });
+  var prev = window.__eaglerRecoveredCrash, head = "";
+  if (prev) {
+    head = "Previous attempt stopped at: " + prev.stage + " (" + (prev.fatalKind || "unknown") + ")\\n"
+      + (prev.logTail || []).filter(function (l) { return !/^BOOTSTAGE/.test(l); }).slice(-3).join("\\n") + "\\n---\\n";
+  }
+  var timer;
+  function render() {
+    if (window.__eaglerGameReady === true) { clearInterval(timer); if (box.parentNode) box.parentNode.removeChild(box); return; }
+    var status = (document.getElementById("boot_status") || {}).textContent || "";
+    var lines = (window.__log || []).filter(function (l) { return !/^BOOTSTAGE/.test(l); }).slice(-8);
+    box.textContent = head + "[" + Math.round((performance.now() - started) / 1000) + "s] " + status + "\\n"
+      + lines.join("\\n") + (errors.length ? "\\n" + errors.slice(-3).join("\\n") : "");
+  }
+  document.body.appendChild(box);
+  timer = setInterval(render, 500);
+  render();
+})();
+</script>
+</body>""")
 
     (out_dir / "index.html").write_text(html, encoding="utf-8")
     print("index.html", len(html), "bytes; payload total", total)

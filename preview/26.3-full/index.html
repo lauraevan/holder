@@ -206,8 +206,8 @@ window.__eaglerWasmServerWorkerBootstrapURL = URL.createObjectURL(new Blob(["(fu
 		}
 		#boot_image {
 			display: block;
-			width: min(100vmin, 512px);
-			height: min(100vmin, 512px);
+			width: min(calc(100vmin - 64px), 512px);
+			height: min(calc(100vmin - 64px), 512px);
 			object-fit: contain;
 			image-rendering: pixelated;
 		}
@@ -818,19 +818,50 @@ var TeaVM=TeaVM||{};TeaVM.wasmGC=TeaVM.wasmGC||(()=>{let n=new Map;let e=null;le
                     async function compileImage(name) {
                       if (window.__eaglerMobileFastStart) {
                         const began = Date.now();
-                        const tick = setInterval(function () {
-                          window.__eaglerBoot(62, 'Loading game... (' + Math.round((Date.now() - began) / 1000) + 's)');
-                        }, 1000);
-                        window.__eaglerBoot(62, 'Loading game...');
+                        let phase = 'Downloading game', received = 0;
+                        const step = function (what) {
+                          window.__log.push('L:[mobile] ' + name + ': ' + what + ' at '
+                            + ((Date.now() - began) / 1000).toFixed(1) + 's');
+                        };
+                        const show = function () {
+                          window.__eaglerBoot(62, phase + '... ' + (received ? (received / 1048576).toFixed(1)
+                            + ' MB, ' : '') + Math.round((Date.now() - began) / 1000) + 's');
+                        };
+                        const tick = setInterval(show, 1000);
+                        show();
                         try {
                           try {
-                            return await WebAssembly.compileStreaming(
-                              window.__eagNativeFetch("/preview/26.3-full/native/" + name), {builtins:['js-string']});
+                            step('requesting native image');
+                            const response = await window.__eagNativeFetch("/preview/26.3-full/native/" + name);
+                            if (!response.ok) throw new Error('HTTP ' + response.status);
+                            step('response ' + response.headers.get('content-type'));
+                            const reader = response.body.getReader();
+                            const counted = new ReadableStream({ async pull(controller) {
+                              const chunk = await reader.read();
+                              if (chunk.done) {
+                                phase = 'Compiling game';
+                                step('downloaded ' + (received / 1048576).toFixed(1) + ' MB');
+                                controller.close();
+                                return;
+                              }
+                              received += chunk.value.length;
+                              controller.enqueue(chunk.value);
+                            } });
+                            const compiled = await WebAssembly.compileStreaming(
+                              new Response(counted, {headers: {'Content-Type': 'application/wasm'}}), {builtins:['js-string']});
+                            step('compiled');
+                            return compiled;
                           } catch (nativeError) {
-                            window.__log.push('W:[mobile] native streaming compile failed (' + nativeError + '); unpacking in page');
+                            step('native streaming failed (' + nativeError + '); unpacking in page');
+                            phase = 'Unpacking game'; received = 0;
                             let bytes = await window.__eagTakeWasmBytes(name);
-                            try { return await WebAssembly.compile(bytes, {builtins:['js-string']}); }
-                            finally { bytes = null; }
+                            phase = 'Compiling game';
+                            step('unpacked');
+                            try {
+                              const compiled = await WebAssembly.compile(bytes, {builtins:['js-string']});
+                              step('compiled');
+                              return compiled;
+                            } finally { bytes = null; }
                           }
                         } finally { clearInterval(tick); }
                       }
@@ -947,5 +978,36 @@ var TeaVM=TeaVM||{};TeaVM.wasmGC=TeaVM.wasmGC||(()=>{let n=new Map;let e=null;le
 		<div class="phone" aria-hidden="true"></div>
 		<div><strong>Rotate your device</strong>Eaglercraft requires landscape mode on mobile devices.</div>
 	</div>
+<script>
+(function () {
+  if (!(window.__eaglerMobileFastStart || new URLSearchParams(location.search).get("debug") === "1")) return;
+  var box = document.createElement("div");
+  box.id = "eagler_loader_trace";
+  box.style.cssText = "position:fixed;left:8px;right:8px;top:8px;z-index:2147483647;max-height:40vh;"
+    + "overflow:hidden;background:rgba(0,0,0,.8);color:#9f9;font:11px/1.35 monospace;padding:6px 8px;"
+    + "border-radius:4px;white-space:pre-wrap;pointer-events:none";
+  var started = performance.now(), errors = [];
+  window.addEventListener("error", function (e) { errors.push("ERROR " + (e.message || e.error)); });
+  window.addEventListener("unhandledrejection", function (e) {
+    errors.push("REJECTED " + (e.reason && (e.reason.message || e.reason)));
+  });
+  var prev = window.__eaglerRecoveredCrash, head = "";
+  if (prev) {
+    head = "Previous attempt stopped at: " + prev.stage + " (" + (prev.fatalKind || "unknown") + ")\n"
+      + (prev.logTail || []).filter(function (l) { return !/^BOOTSTAGE/.test(l); }).slice(-3).join("\n") + "\n---\n";
+  }
+  var timer;
+  function render() {
+    if (window.__eaglerGameReady === true) { clearInterval(timer); if (box.parentNode) box.parentNode.removeChild(box); return; }
+    var status = (document.getElementById("boot_status") || {}).textContent || "";
+    var lines = (window.__log || []).filter(function (l) { return !/^BOOTSTAGE/.test(l); }).slice(-8);
+    box.textContent = head + "[" + Math.round((performance.now() - started) / 1000) + "s] " + status + "\n"
+      + lines.join("\n") + (errors.length ? "\n" + errors.slice(-3).join("\n") : "");
+  }
+  document.body.appendChild(box);
+  timer = setInterval(render, 500);
+  render();
+})();
+</script>
 </body>
 </html>
