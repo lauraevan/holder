@@ -1,6 +1,10 @@
 name: Remove 26.3 menu branding
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - 'tools/remove_26_3_menu_branding.py'
+      - '.github/workflows/remove-26-3-menu-branding.yml'
 permissions:
   contents: write
 jobs:
