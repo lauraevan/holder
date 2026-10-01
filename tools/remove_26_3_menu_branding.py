@@ -11,6 +11,8 @@ needles = [
     b"Made by Joey-JM",
     b"Made by Joey",
     b"Joey-JM",
+    b"Made by %s",
+    b"Rewritten by %s",
     b"26.3 JM",
 ]
 print("raw_size", len(raw))
@@ -32,6 +34,8 @@ repls = {
     b"Made by Joey-JM": b"               ",
     b"Made by Joey": b"            ",
     b"Joey-JM": b"       ",
+    b"Made by %s": b"          ",
+    b"Rewritten by %s": b"               ",
 }
 counts={}
 for old,new in repls.items():
@@ -41,5 +45,5 @@ for old,new in repls.items():
     counts[old.decode()] = c
 print("patched_counts", counts)
 print("patched_sha256", hashlib.sha256(patched).hexdigest())
-out.write_bytes(brotli.compress(patched, quality=11))
+out.write_bytes(brotli.compress(patched, quality=5))
 print("compressed_size", out.stat().st_size)
