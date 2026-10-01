@@ -1,0 +1,54 @@
+name: Build world-list patched client
+on:
+  push:
+    paths:
+      - 'tools/patch_world_list_wasm.py'
+      - '.github/workflows/build-world-list-client.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install wasm-tools
+        run: |
+          set -euo pipefail
+          curl -fL --retry 5 https://github.com/bytecodealliance/wasm-tools/releases/download/v1.219.1/wasm-tools-1.219.1-x86_64-linux.tar.gz -o /tmp/wasm-tools.tgz
+          tar xzf /tmp/wasm-tools.tgz -C /tmp
+          sudo cp /tmp/wasm-tools-1.219.1-x86_64-linux/wasm-tools /usr/local/bin/wasm-tools
+      - name: Download canonical 26.2 client
+        run: |
+          set -euo pipefail
+          curl -fL --retry 5 https://raw.githubusercontent.com/Enchantment-Niko/mcjs/bc586558628e2d7ef8ea1cebf198495625619eb2/wasm-loader/26.2/eag26.2-wasm-br.wasm -o /tmp/client.br
+          python3 -m pip install --quiet brotli
+          python3 - <<'PY'
+          import brotli
+          raw=brotli.decompress(open('/tmp/client.br','rb').read())
+          open('/tmp/client.wasm','wb').write(raw)
+          print("decoded",len(raw))
+          PY
+      - name: Patch exact empty-world branch
+        run: |
+          set -euo pipefail
+          python3 tools/patch_world_list_wasm.py /tmp/client.wasm /tmp/client-patched.wasm preview/26.3-asset-swap/world-list-client-patch.json
+          wasm-tools validate /tmp/client-patched.wasm
+      - name: Compress patched client
+        run: |
+          python3 - <<'PY'
+          import brotli, hashlib
+          raw=open('/tmp/client-patched.wasm','rb').read()
+          out=brotli.compress(raw,quality=6)
+          path='preview/26.3-asset-swap/eag26.2-wasm-worldlist-fix-br.wasm'
+          open(path,'wb').write(out)
+          print("compressed",len(out),"sha256",hashlib.sha256(out).hexdigest())
+          PY
+      - name: Commit patched client
+        run: |
+          set -euo pipefail
+          git config user.name 'world-list-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add preview/26.3-asset-swap/eag26.2-wasm-worldlist-fix-br.wasm preview/26.3-asset-swap/world-list-client-patch.json
+          git diff --cached --quiet || git commit -m 'Patch empty Singleplayer world list behavior'
+          git pull --rebase origin main
+          git push
