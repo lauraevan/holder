@@ -9,7 +9,9 @@
 //
 // usage:
 //   node patch_26_3_branding.js --inspect <classes.wasm.bin>
-//   node patch_26_3_branding.js <in.wasm.bin> <out.wasm.bin> '<old>=<new>' ...
+//   node patch_26_3_branding.js <in.wasm.bin> <out.wasm.bin> '<old>=<new>' ... [--lower-label=<old>]
+// --lower-label moves the title-screen line drawn from <old>'s getter down to
+// the bottom line.
 // .wasm.bin files are Brotli-compressed Wasm images, as shipped by the page.
 'use strict';
 const fs = require('fs');
@@ -77,10 +79,49 @@ function findCharRuns(wasm, from, to) {
   return runs;
 }
 
-function patch(wasm, edits) {
+function countFunctionImports(wasm) {
+  const imports = sections(wasm).find(s => s.id === 2);
+  if (!imports) return 0;
+  let [n, pos] = readU(wasm, imports.body), funcs = 0;
+  const skipLimits = () => { const flags = wasm[pos++]; [, pos] = readU(wasm, pos); if (flags & 1) [, pos] = readU(wasm, pos); };
+  for (let i = 0; i < n; i++) {
+    for (let k = 0; k < 2; k++) { let len; [len, pos] = readU(wasm, pos); pos += len; }
+    const kind = wasm[pos++];
+    if (kind === 0) { funcs++; [, pos] = readU(wasm, pos); }
+    else if (kind === 1) { pos++; skipLimits(); }
+    else if (kind === 2) skipLimits();
+    else if (kind === 3) pos += 2;
+    else if (kind === 4) { pos++; [, pos] = readU(wasm, pos); }
+    else throw new Error('unknown import kind ' + kind);
+  }
+  return funcs;
+}
+
+// The title screen draws the version label at `height - 20` and the (now
+// cleared) credit line at `height - 10`, each just before calling its getter.
+// Move the label onto the bottom line by changing that one 20 to 10 in place.
+function lowerTitleLabel(wasm, labelGetter) {
+  const code = sections(wasm).find(s => s.id === 10);
+  const call = Buffer.concat([Buffer.from([0x10]), encU(labelGetter)]);
+  const upper = Buffer.from([0x41, 0x14, 0x6b, 0x21]);  // i32.const 20; i32.sub; local.set
+  const hits = [];
+  for (let at = wasm.indexOf(call, code.body); at >= 0 && at < code.end; at = wasm.indexOf(call, at + 1)) {
+    const from = Math.max(code.body, at - 300);
+    const y = wasm.subarray(from, at).lastIndexOf(upper);
+    // The bottom line's `height - 10` must follow in the same draw code.
+    const bottom = wasm.subarray(at, at + 2000).indexOf(Buffer.from([0x41, 0x0a, 0x6b, 0x21]));
+    if (y >= 0 && bottom >= 0) hits.push(from + y);
+  }
+  if (hits.length !== 1) throw new Error('expected one title label position, found ' + hits.length);
+  wasm[hits[0] + 1] = 0x0a;
+  console.error('title label: height - 20 -> height - 10 at %d', hits[0]);
+}
+
+function patch(wasm, edits, options = {}) {
   const code = sections(wasm).find(s => s.id === 10);
   const [count, first] = readU(wasm, code.body);
   const pending = new Map(Object.entries(edits));
+  const getters = {};
   const bodies = [];
   let pos = first, changed = 0;
   for (let i = 0; i < count; i++) {
@@ -100,6 +141,7 @@ function patch(wasm, edits) {
                      Buffer.from([0xfb, 0x08]), encU(run.type), encU(text.length));
           last = run.end;
           console.error('function #%d: %j -> %j', i, run.text, text);
+          getters[run.text] = i;
           changed++;
         }
         parts.push(body.subarray(last));
@@ -112,8 +154,13 @@ function patch(wasm, edits) {
     throw new Error('expected ' + pending.size + ' edits, applied ' + changed);
   }
   const content = Buffer.concat([encU(count), ...bodies]);
-  return Buffer.concat([wasm.subarray(0, code.start), Buffer.from([10]), encU(content.length),
-                        content, wasm.subarray(code.end)]);
+  const out = Buffer.concat([wasm.subarray(0, code.start), Buffer.from([10]), encU(content.length),
+                             content, wasm.subarray(code.end)]);
+  if (options.lowerLabel) {
+    if (!(options.lowerLabel in getters)) throw new Error('label getter not edited: ' + options.lowerLabel);
+    lowerTitleLabel(out, countFunctionImports(out) + getters[options.lowerLabel]);
+  }
+  return out;
 }
 
 const args = process.argv.slice(2);
@@ -124,13 +171,14 @@ if (args[0] === '--inspect') {
     if (/JM|Joey|o_xer|Made by|Credits/.test(run.text)) console.log(run.start, JSON.stringify(run.text));
   }
 } else {
-  const [input, output, ...pairs] = args;
-  const edits = {};
-  for (const pair of pairs) {
-    const i = pair.indexOf('=');
-    edits[pair.slice(0, i)] = pair.slice(i + 1);
+  const [input, output, ...rest] = args;
+  const edits = {}, options = {};
+  for (const arg of rest) {
+    if (arg.startsWith('--lower-label=')) { options.lowerLabel = arg.slice('--lower-label='.length); continue; }
+    const i = arg.indexOf('=');
+    edits[arg.slice(0, i)] = arg.slice(i + 1);
   }
-  const wasm = patch(zlib.brotliDecompressSync(fs.readFileSync(input)), edits);
+  const wasm = patch(zlib.brotliDecompressSync(fs.readFileSync(input)), edits, options);
   if (!WebAssembly.validate(wasm, { builtins: ['js-string'] })) {
     throw new Error('patched module does not validate');
   }

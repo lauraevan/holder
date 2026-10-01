@@ -38,8 +38,8 @@ TRANSLATIONS = {
 }
 
 # Joey-JM's credit moves from the title screen to the Credits page: the version
-# label reads "Minecraft 26.3" and the title's "Made by Joey-JM" line is
-# cleared. The Credits page keeps "26.3-JM Credits" and "Made by Joey-JM |
+# label reads "Minecraft 26.3" and moves down to the bottom line, where the
+# title's "Made by Joey-JM" line (now cleared) used to be. The Credits page keeps "26.3-JM Credits" and "Made by Joey-JM |
 # Based on Eaglercraft 26.2", which are separate strings.
 BRANDING_EDITS = {
     "26.3-JM": "Minecraft 26.3",
@@ -96,7 +96,8 @@ def main():
         if pid == "eag-inline-wasm-br":
             patcher = Path(__file__).with_name("patch_26_3_branding.js")
             subprocess.run(["node", str(patcher), str(out_dir / name), str(out_dir / name)]
-                           + ["%s=%s" % kv for kv in BRANDING_EDITS.items()], check=True)
+                           + ["%s=%s" % kv for kv in BRANDING_EDITS.items()]
+                           + ["--lower-label=26.3-JM"], check=True)
             data = (out_dir / name).read_bytes()
             size = len(data)
         payloads[pid] = {"url": base + name, "size": size}
