@@ -29,8 +29,11 @@ jobs:
           PY
       - name: Extract function 12721
         run: |
-          set -euo pipefail
+          set -eu
+          set +o pipefail
           wasm-tools print /tmp/classes.wasm | python3 tools/extract_wat_func_12721.py > preview/26.3-asset-swap/world-list-func-12721.wat
+          set -o pipefail
+          test -s preview/26.3-asset-swap/world-list-func-12721.wat
           wc -c preview/26.3-asset-swap/world-list-func-12721.wat
       - name: Commit report
         run: |
