@@ -1,0 +1,22 @@
+name: Compare native title profile row
+on:
+  push:
+    paths:
+      - 'tools/compare_title_profile.py'
+      - '.github/workflows/compare-title-profile.yml'
+permissions:
+  contents: write
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - run: python3 tools/compare_title_profile.py
+      - run: |
+          git config user.name title-profile-bot
+          git config user.email actions@users.noreply.github.com
+          git add preview/26.3-asset-swap/title-profile-function-map.json preview/26.3-asset-swap/title-profile-26.2.wat preview/26.3-asset-swap/title-profile-26.3.wat
+          git diff --cached --quiet || git commit -m 'Compare native Edit Profile title row'
+          git push
