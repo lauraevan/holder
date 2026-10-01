@@ -1,0 +1,41 @@
+name: Decompile 26.2 world-list function
+on:
+  push:
+    paths:
+      - '.github/workflows/decompile-world-list-262.yml'
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Clone tools
+        run: git clone --depth 1 https://github.com/lauraevan/EvanClient.git /tmp/EvanClient
+      - name: Install wasm-tools
+        run: |
+          curl -fL --retry 5 https://github.com/bytecodealliance/wasm-tools/releases/download/v1.219.1/wasm-tools-1.219.1-x86_64-linux.tar.gz -o /tmp/wasm-tools.tgz
+          tar xzf /tmp/wasm-tools.tgz -C /tmp
+          sudo cp /tmp/wasm-tools-1.219.1-x86_64-linux/wasm-tools /usr/local/bin/wasm-tools
+      - name: Build 26.2 model and decompile
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/work /tmp/EvanClient/analysis/names/26.2 preview/26.3-asset-swap
+          curl -fL --retry 5 https://raw.githubusercontent.com/Enchantment-Niko/mcjs/bc586558628e2d7ef8ea1cebf198495625619eb2/wasm-loader/26.2/eag26.2-wasm-br.wasm -o /tmp/client.br
+          python3 -m pip install --quiet brotli
+          python3 - <<'PY'
+          import brotli
+          open('/tmp/work/26.2-client.wasm','wb').write(brotli.decompress(open('/tmp/client.br','rb').read()))
+          PY
+          wasm-tools print /tmp/work/26.2-client.wasm -o /tmp/work/26.2-client.wat
+          python3 /tmp/EvanClient/tools/wasm_gc_model.py /tmp/work/26.2-client.wasm /tmp/work/26.2-client.model.json --wat /tmp/work/26.2-client.wat
+          cp -a /tmp/EvanClient/analysis/names/26.3/. /tmp/EvanClient/analysis/names/26.2/
+          cd /tmp/EvanClient
+          python3 tools/decompile.py --work /tmp/work --version 26.2 --image client 12721 > "$GITHUB_WORKSPACE/preview/26.3-asset-swap/world-list-262-decompiled.txt"
+      - name: Commit output
+        run: |
+          git config user.name 'world-list-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add preview/26.3-asset-swap/world-list-262-decompiled.txt
+          git diff --cached --quiet || git commit -m 'Decompile 26.2 world-list empty-state function'
+          git push
