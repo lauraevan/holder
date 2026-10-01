@@ -1,0 +1,41 @@
+name: Inspect 26.2 world-list function
+on:
+  push:
+    paths:
+      - 'tools/extract_wat_func_12721.py'
+      - '.github/workflows/inspect-world-list-func.yml'
+permissions:
+  contents: write
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install wasm-tools
+        run: |
+          set -euo pipefail
+          curl -fL --retry 5 https://github.com/bytecodealliance/wasm-tools/releases/download/v1.219.1/wasm-tools-1.219.1-x86_64-linux.tar.gz -o /tmp/wasm-tools.tgz
+          tar xzf /tmp/wasm-tools.tgz -C /tmp
+          sudo cp /tmp/wasm-tools-1.219.1-x86_64-linux/wasm-tools /usr/local/bin/wasm-tools
+      - name: Download and decode 26.2 client
+        run: |
+          set -euo pipefail
+          curl -fL --retry 5 https://raw.githubusercontent.com/Enchantment-Niko/mcjs/bc586558628e2d7ef8ea1cebf198495625619eb2/wasm-loader/26.2/eag26.2-wasm-br.wasm -o /tmp/client.br
+          python3 -m pip install --quiet brotli
+          python3 - <<'PY'
+          import brotli
+          data=open('/tmp/client.br','rb').read()
+          open('/tmp/classes.wasm','wb').write(brotli.decompress(data))
+          PY
+      - name: Extract function 12721
+        run: |
+          set -euo pipefail
+          wasm-tools print /tmp/classes.wasm | python3 tools/extract_wat_func_12721.py > preview/26.3-asset-swap/world-list-func-12721.wat
+          wc -c preview/26.3-asset-swap/world-list-func-12721.wat
+      - name: Commit report
+        run: |
+          git config user.name 'world-list-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add preview/26.3-asset-swap/world-list-func-12721.wat
+          git diff --cached --quiet || git commit -m 'Inspect 26.2 empty world-list function'
+          git push
