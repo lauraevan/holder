@@ -10,7 +10,7 @@ usage: build_26_3_full_page.py <webmc/assets/26.3.html> <out_dir> <site base pat
 
 Vercel rewrites / to this page, so payload URLs are absolute site paths.
 """
-import base64, hashlib, json, re, sys
+import base64, hashlib, json, re, subprocess, sys
 from pathlib import Path
 
 PAYLOAD_FILES = {
@@ -35,6 +35,15 @@ TRANSLATIONS = {
     "正在加载 Eaglercraft 26.3 运行时...": "Loading Eaglercraft 26.3 runtime...",
     "旋转你的设备": "Rotate your device",
     "Eaglercraft 在移动设备需要横屏模式": "Eaglercraft requires landscape mode on mobile devices.",
+}
+
+# Joey-JM's credit moves from the title screen to the Credits page: the version
+# label reads "Minecraft 26.3" and the title's "Made by Joey-JM" line is
+# cleared. The Credits page keeps "26.3-JM Credits" and "Made by Joey-JM |
+# Based on Eaglercraft 26.2", which are separate strings.
+BRANDING_EDITS = {
+    "26.3-JM": "Minecraft 26.3",
+    "Made by Joey-JM": "",
 }
 
 # Replaces the base64 <script> decoder: same contract (Promise<Uint8Array>, one
@@ -84,6 +93,12 @@ def main():
             continue
         name = PAYLOAD_FILES[pid]
         (out_dir / name).write_bytes(data)
+        if pid == "eag-inline-wasm-br":
+            patcher = Path(__file__).with_name("patch_26_3_branding.js")
+            subprocess.run(["node", str(patcher), str(out_dir / name), str(out_dir / name)]
+                           + ["%s=%s" % kv for kv in BRANDING_EDITS.items()], check=True)
+            data = (out_dir / name).read_bytes()
+            size = len(data)
         payloads[pid] = {"url": base + name, "size": size}
         print("%-28s %-24s %10d %s" % (pid, name, size, hashlib.sha256(data).hexdigest()[:12]))
     html = block.sub("", html)

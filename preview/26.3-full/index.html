@@ -25,7 +25,7 @@ var bytes=r&&r.memory?r.memory.buffer.byteLength:0;r=undefined;M=undefined;O=nul
   window.__eaglerInlinePayloadCacheBytes = 0;
 
   // Bound work independently of how the base64 was wrapped by the packager.
-  const PAYLOADS = {"eag-inline-decoder": {"url": "/preview/26.3-full/decoder.wasm", "size": 208439}, "eag-inline-wasm-br": {"url": "/preview/26.3-full/classes.wasm.bin", "size": 18621655}, "eag-inline-mesh-wasm-br": {"url": "/preview/26.3-full/mesh-worker.wasm.bin", "size": 2842492}, "eag-inline-server-wasm-br": {"url": "/preview/26.3-full/server-worker.wasm.bin", "size": 9595877}, "eag-inline-sounds": {"url": "/preview/26.3-full/sounds.epk", "size": 25921893}, "eag-inline-assets": {"url": "/preview/26.3-full/assets.epk", "size": 28321694}};
+  const PAYLOADS = {"eag-inline-decoder": {"url": "/preview/26.3-full/decoder.wasm", "size": 208439}, "eag-inline-wasm-br": {"url": "/preview/26.3-full/classes.wasm.bin", "size": 16382262}, "eag-inline-mesh-wasm-br": {"url": "/preview/26.3-full/mesh-worker.wasm.bin", "size": 2842492}, "eag-inline-server-wasm-br": {"url": "/preview/26.3-full/server-worker.wasm.bin", "size": 9595877}, "eag-inline-sounds": {"url": "/preview/26.3-full/sounds.epk", "size": 25921893}, "eag-inline-assets": {"url": "/preview/26.3-full/assets.epk", "size": 28321694}};
   function decodePayload(id) {
     if (inflight.has(id)) return inflight.get(id);
     const entry = PAYLOADS[id];
@@ -646,7 +646,7 @@ window.__eaglerWasmServerWorkerBootstrapURL = URL.createObjectURL(new Blob(["(fu
 			} catch (e) {}
 		};
 		(function () {
-			var total = Number(window.__eaglerMobileFastStart ? "54243587" : "75916173") || 0;
+			var total = Number(window.__eaglerMobileFastStart ? "54243587" : "73676780") || 0;
 			var loadedByUrl = Object.create(null);
 			window.__eaglerAssetDownloadProgress = function (url, loaded) {
 				loadedByUrl[String(url).replace(/[?#].*$/, "")] = Math.max(0, Number(loaded) || 0);
