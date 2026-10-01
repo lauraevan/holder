@@ -1,0 +1,17 @@
+{
+  "identified_absolute_function": 12945,
+  "discovered_defined_ordinal": 12843,
+  "function_offset": 21321956,
+  "function_size": 4725,
+  "no_worlds_string_global": 156617,
+  "string_anchor_bytes": "23c9c709",
+  "original_function_sha256": "5151dc9578215c3ea9e61c07782922d863d2e9a0cac4ee74cb2cc1a636c38f35",
+  "patched_function_sha256": "98f05536601e283d0f6108db64e2b90e252b2a76736b3191998e45de4fc0a79b",
+  "original_module_sha256": "bee72302d820f4fb99aedc22fb159571b7cebdbf5bb8bdcd4f4356d058076ee9",
+  "patched_module_sha256": "98dc82da2555cc1aa0d687e0175f0758de755112e374ffa2f5a7be5b34c21ce0",
+  "relative_patch_offset": 883,
+  "absolute_patch_offset": 21322839,
+  "old_bytes": "0e02000124",
+  "new_bytes": "0e02010124",
+  "semantic_change": "Empty SINGLEPLAYER world list follows the normal NoWorldsEntry branch instead of auto-opening CreateWorldScreen"
+}
