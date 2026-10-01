@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import sys
 
-TARGET = "(func (;12729;)"
+TARGET = "(func (;12945;)"
 capturing = False
 out = []
 
@@ -17,5 +17,5 @@ for line in sys.stdin:
     out.append(line)
 
 if not capturing:
-    raise SystemExit("literal function header (;12729;) not found")
+    raise SystemExit("literal function header (;12945;) not found")
 sys.stdout.write("".join(out))
