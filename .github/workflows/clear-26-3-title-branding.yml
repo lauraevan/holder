@@ -25,7 +25,7 @@ jobs:
         run: |
           git config user.name 'menu-polish-bot'
           git config user.email 'actions@users.noreply.github.com'
-          git pull --rebase
           git add preview/26.3-asset-swap/eag26.3-assets-all-languages.epk preview/26.3-asset-swap/title-branding-clear-report.json
           git diff --cached --quiet || git commit -m 'Remove Joey branding from Minecraft 26.3 menu'
+          git pull --rebase
           git push
