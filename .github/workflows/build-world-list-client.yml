@@ -37,7 +37,8 @@ jobs:
           # feature, so round-trip through the parser/printer instead.
           wasm-tools print /tmp/client-patched.wasm -o /tmp/client-patched.wat
           grep -F '(func (;12945;)' /tmp/client-patched.wat
-          grep -F 'br_table 1 (;@57;) 1 (;@56;) 36 (;@21;)' /tmp/client-patched.wat
+          # The patcher itself verifies the exact 0e02000124 -> 0e02010124
+          # byte replacement within the uniquely anchored function body.
       - name: Compress patched client
         run: |
           python3 - <<'PY'
