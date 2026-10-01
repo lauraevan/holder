@@ -1,0 +1,23 @@
+name: Remove 26.3 menu branding
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 -m pip install --quiet brotli
+      - name: Patch compiled client menu branding
+        run: |
+          python3 tools/remove_26_3_menu_branding.py \
+            preview/26.3-full/classes.wasm.bin \
+            preview/26.3-full/classes.wasm.bin | tee preview/26.3-full/menu-branding-patch.txt
+      - name: Commit patched client
+        run: |
+          git config user.name 'menu-polish-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add preview/26.3-full/classes.wasm.bin preview/26.3-full/menu-branding-patch.txt
+          git diff --cached --quiet || git commit -m 'Remove Joey menu branding from Minecraft 26.3'
+          git push
