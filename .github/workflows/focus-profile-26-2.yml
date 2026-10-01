@@ -1,0 +1,20 @@
+name: Focus 26.2 profile menu map
+on:
+  push:
+    paths:
+      - 'tools/focus_profile_26_2.py'
+      - '.github/workflows/focus-profile-26-2.yml'
+permissions:
+  contents: write
+jobs:
+  focus:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 tools/focus_profile_26_2.py
+      - run: |
+          git config user.name profile-focus-bot
+          git config user.email actions@users.noreply.github.com
+          git add preview/26.3-asset-swap/profile-26.2-focus.json
+          git diff --cached --quiet || git commit -m 'Focus native Edit Profile menu map'
+          git push

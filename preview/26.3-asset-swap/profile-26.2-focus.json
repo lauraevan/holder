@@ -1,0 +1,2796 @@
+{
+  "wanted_strings": {
+    "51091": "menu.options",
+    "57544": "Edit Profile",
+    "76756": "editProfile.importExport",
+    "104453": "menu.singleplayer",
+    "104454": "menu.multiplayer",
+    "149966": "editProfile.username",
+    "149968": "editProfile.playerSkin",
+    "149971": "editProfile.addSkin",
+    "149974": "editProfile.clearSkin",
+    "149976": "editProfile.steveOrAlex",
+    "155599": "editProfile.title",
+    "156267": "editProfile.capes"
+  },
+  "classes": [
+    {
+      "global": 18687,
+      "name": "net.lax1dude.eaglercraft.v1_8.internal.PlatformNetworking$getWispcraftAccountProfile$lambda$_8_0",
+      "vtable": 45562,
+      "clinit": null
+    },
+    {
+      "global": 7052,
+      "name": "net.minecraft.client.gui.components.debug.DebugScreenProfile",
+      "vtable": 18754,
+      "clinit": 19694
+    },
+    {
+      "global": 14297,
+      "name": "net.minecraft.client.gui.screens.TitleScreen",
+      "vtable": 1665,
+      "clinit": 20486
+    },
+    {
+      "global": 2246,
+      "name": "com.mojang.authlib.GameProfile",
+      "vtable": 9273,
+      "clinit": null
+    },
+    {
+      "global": 1748,
+      "name": "net.minecraft.util.profiling.ProfilerFiller",
+      "vtable": null,
+      "clinit": null
+    },
+    {
+      "global": 18843,
+      "name": "net.minecraft.util.profiling.ProfileCollector",
+      "vtable": null,
+      "clinit": null
+    },
+    {
+      "global": 7077,
+      "name": "net.minecraft.world.entity.player.ProfilePublicKey",
+      "vtable": 27878,
+      "clinit": 23511
+    },
+    {
+      "global": 6677,
+      "name": "com.mojang.authlib.minecraft.MinecraftProfileTexture$Type",
+      "vtable": 18883,
+      "clinit": 24140
+    },
+    {
+      "global": 7083,
+      "name": "net.minecraft.util.profiling.ActiveProfiler$PathEntry",
+      "vtable": 32336,
+      "clinit": null
+    },
+    {
+      "global": 18884,
+      "name": "net.minecraft.util.profiling.ProfilerPathEntry",
+      "vtable": null,
+      "clinit": null
+    },
+    {
+      "global": 12469,
+      "name": "net.minecraft.world.entity.player.ProfileKeyPair",
+      "vtable": 27894,
+      "clinit": 24298
+    },
+    {
+      "global": 6679,
+      "name": "net.minecraft.world.entity.player.ProfilePublicKey$Data",
+      "vtable": 18899,
+      "clinit": 24571
+    },
+    {
+      "global": 14445,
+      "name": "net.minecraft.util.profiling.InactiveProfiler",
+      "vtable": 8590,
+      "clinit": 26686
+    },
+    {
+      "global": 12511,
+      "name": "net.minecraft.util.profiling.ActiveProfiler",
+      "vtable": 6696,
+      "clinit": 27410
+    },
+    {
+      "global": 12566,
+      "name": "net.minecraft.client.renderer.state.gui.pip.GuiProfilerChartRenderState",
+      "vtable": 10290,
+      "clinit": null
+    },
+    {
+      "global": 2810,
+      "name": "net.minecraft.world.item.component.ResolvableProfile",
+      "vtable": null,
+      "clinit": 31565
+    },
+    {
+      "global": 19201,
+      "name": "net.lax1dude.eaglercraft.v1_8.profile.CustomCape",
+      "vtable": 50235,
+      "clinit": 32258
+    },
+    {
+      "global": 19202,
+      "name": "net.lax1dude.eaglercraft.v1_8.profile.CustomSkin",
+      "vtable": 50236,
+      "clinit": 32259
+    },
+    {
+      "global": 4703,
+      "name": "net.lax1dude.eaglercraft.v1_8.profile.SkinModel",
+      "vtable": 19203,
+      "clinit": 32265
+    },
+    {
+      "global": 3199,
+      "name": "net.lax1dude.eaglercraft.v1_8.profile.DefaultSkins",
+      "vtable": 4417,
+      "clinit": 32275
+    },
+    {
+      "global": 3071,
+      "name": "net.lax1dude.eaglercraft.v1_8.profile.DefaultCapes",
+      "vtable": 4158,
+      "clinit": 32281
+    },
+    {
+      "global": 12604,
+      "name": "net.lax1dude.eaglercraft.v1_8.profile.EaglerSkinCache26$Entry",
+      "vtable": 87199,
+      "clinit": null
+    },
+    {
+      "global": 23236,
+      "name": "net.minecraft.util.profiling.metrics.ProfilerMeasured",
+      "vtable": null,
+      "clinit": null
+    },
+    {
+      "global": 6745,
+      "name": "com.mojang.authlib.minecraft.MinecraftProfileTexture",
+      "vtable": 50636,
+      "clinit": 34305
+    },
+    {
+      "global": 19473,
+      "name": "net.minecraft.client.gui.screens.TitleScreen$init$lambda$_6_5",
+      "vtable": 51475,
+      "clinit": null
+    },
+    {
+      "global": 11484,
+      "name": "net.minecraft.util.profiling.ProfilerFiller$CombinedProfileFiller",
+      "vtable": 8731,
+      "clinit": null
+    },
+    {
+      "global": 23705,
+      "name": "net.minecraft.util.profiling.ActiveProfiler$getCurrentEntry$lambda$_9_0",
+      "vtable": 39154,
+      "clinit": null
+    },
+    {
+      "global": 11522,
+      "name": "net.minecraft.world.item.component.ResolvableProfile$Static",
+      "vtable": 12863,
+      "clinit": 60840
+    },
+    {
+      "global": 7645,
+      "name": "net.minecraft.world.item.component.ResolvableProfile$Partial",
+      "vtable": 19832,
+      "clinit": 62129
+    },
+    {
+      "global": 24002,
+      "name": "net.lax1dude.eaglercraft.v1_8.profile.EaglerSkinCache26$lambda$createLookup$0$lambda$_18_0",
+      "vtable": 57832,
+      "clinit": null
+    },
+    {
+      "global": 14984,
+      "name": "com.mojang.authlib.yggdrasil.ProfileResult",
+      "vtable": 33747,
+      "clinit": null
+    },
+    {
+      "global": 8800,
+      "name": "com.mojang.authlib.yggdrasil.ProfileActionType",
+      "vtable": 24032,
+      "clinit": 70065
+    },
+    {
+      "global": 9619,
+      "name": "com.mojang.authlib.yggdrasil.response.ProfileSearchResultsResponse",
+      "vtable": 33756,
+      "clinit": 70693
+    },
+    {
+      "global": 8815,
+      "name": "net.minecraft.commands.arguments.GameProfileArgument",
+      "vtable": 11630,
+      "clinit": 76594
+    },
+    {
+      "global": 20048,
+      "name": "com.mojang.authlib.yggdrasil.response.MinecraftProfilePropertiesResponse",
+      "vtable": 173003,
+      "clinit": null
+    },
+    {
+      "global": 13102,
+      "name": "net.minecraft.server.players.CachedUserNameToIdResolver$GameProfileInfo",
+      "vtable": 33860,
+      "clinit": null
+    },
+    {
+      "global": 20135,
+      "name": "net.minecraft.util.profiling.FilledProfileResults$appendCounters$lambda$_15_0",
+      "vtable": 58353,
+      "clinit": null
+    },
+    {
+      "global": 20194,
+      "name": "net.minecraft.server.players.ProfileResolver$Cached$1",
+      "vtable": 58527,
+      "clinit": null
+    },
+    {
+      "global": 20195,
+      "name": "net.minecraft.server.players.ProfileResolver$Cached$2",
+      "vtable": 58528,
+      "clinit": null
+    },
+    {
+      "global": 11743,
+      "name": "net.lax1dude.eaglercraft.v1_8.sp.relay.RelaySettings$Profile",
+      "vtable": 17561,
+      "clinit": null
+    },
+    {
+      "global": 13496,
+      "name": "net.minecraft.world.item.component.ResolvableProfile$Dynamic",
+      "vtable": 15407,
+      "clinit": 101552
+    },
+    {
+      "global": 13512,
+      "name": "net.minecraft.server.packs.resources.ProfiledReloadInstance$State",
+      "vtable": 34255,
+      "clinit": null
+    },
+    {
+      "global": 17734,
+      "name": "net.lax1dude.eaglercraft.v1_8.profile.EaglerDropdownWidget26",
+      "vtable": 3247,
+      "clinit": 103508
+    },
+    {
+      "global": 24549,
+      "name": "net.lax1dude.eaglercraft.v1_8.profile.EaglerCapedSkinWidget26",
+      "vtable": 3099,
+      "clinit": null
+    },
+    {
+      "global": 9820,
+      "name": "net.minecraft.util.profiling.FilledProfileResults$CounterCollector",
+      "vtable": 60205,
+      "clinit": null
+    },
+    {
+      "global": 20974,
+      "name": "net.lax1dude.eaglercraft.v1_8.profile.EaglerProfileScreen26",
+      "vtable": 2608,
+      "clinit": 105585
+    },
+    {
+      "global": 11915,
+      "name": "com.mojang.authlib.minecraft.MinecraftProfileTextures",
+      "vtable": 30018,
+      "clinit": 105826
+    },
+    {
+      "global": 13705,
+      "name": "net.minecraft.commands.arguments.GameProfileArgument$SelectorResult",
+      "vtable": 110769,
+      "clinit": null
+    },
+    {
+      "global": 21419,
+      "name": "net.minecraft.commands.arguments.GameProfileArgument$parse$lambda$_5_0",
+      "vtable": 110770,
+      "clinit": null
+    },
+    {
+      "global": 21434,
+      "name": "net.minecraft.util.datafix.fixes.DebugProfileLookingAtSplitFix$lambda$updateOptions$0$lambda$_5_0",
+      "vtable": 60851,
+      "clinit": null
+    },
+    {
+      "global": 9955,
+      "name": "net.minecraft.commands.arguments.GameProfileArgument$Result",
+      "vtable": null,
+      "clinit": null
+    },
+    {
+      "global": 25014,
+      "name": "net.minecraft.world.item.component.ResolvableProfile$lambda$static$0$lambda$_16_2",
+      "vtable": 62164,
+      "clinit": null
+    },
+    {
+      "global": 25029,
+      "name": "net.minecraft.util.ExtraCodecs$lambda$gameProfileCodec$0$lambda$_50_3",
+      "vtable": 62179,
+      "clinit": null
+    },
+    {
+      "global": 25039,
+      "name": "net.minecraft.world.item.component.ResolvableProfile$Partial$lambda$static$0$lambda$_8_3",
+      "vtable": 62189,
+      "clinit": null
+    },
+    {
+      "global": 21885,
+      "name": "net.minecraft.util.profiling.FilledProfileResults$1",
+      "vtable": 34813,
+      "clinit": null
+    },
+    {
+      "global": 30447,
+      "name": "net.minecraft.client.gui.render.pip.GuiProfilerChartRenderer",
+      "vtable": 18169,
+      "clinit": null
+    },
+    {
+      "global": 30580,
+      "name": "net.minecraft.util.datafix.fixes.PlayerHeadBlockProfileFix",
+      "vtable": 41428,
+      "clinit": null
+    },
+    {
+      "global": 30615,
+      "name": "net.minecraft.util.datafix.fixes.DebugProfileOverlayReferenceFix",
+      "vtable": 63474,
+      "clinit": null
+    },
+    {
+      "global": 30620,
+      "name": "net.minecraft.util.datafix.fixes.DebugProfileLookingAtSplitFix",
+      "vtable": 63479,
+      "clinit": null
+    },
+    {
+      "global": 15837,
+      "name": "com.mojang.authlib.yggdrasil.response.ProfileSearchResultsResponse$Serializer",
+      "vtable": 63563,
+      "clinit": null
+    },
+    {
+      "global": 31065,
+      "name": "net.lax1dude.eaglercraft.v1_8.profile.EaglerBorderBoxWidget26",
+      "vtable": 3260,
+      "clinit": null
+    },
+    {
+      "global": 26717,
+      "name": "net.minecraft.util.profiling.FilledProfileResults$lambda$getCounterValues$1$lambda$_21_0",
+      "vtable": 64834,
+      "clinit": null
+    },
+    {
+      "global": 26780,
+      "name": "net.minecraft.world.entity.player.ProfileKeyPair$lambda$static$0$lambda$_8_3",
+      "vtable": 64946,
+      "clinit": null
+    },
+    {
+      "global": 26782,
+      "name": "net.minecraft.world.entity.player.ProfilePublicKey$Data$lambda$static$0$lambda$_13_3",
+      "vtable": 64948,
+      "clinit": null
+    },
+    {
+      "global": 26789,
+      "name": "net.minecraft.util.profiling.FilledProfileResults$CounterCollector$addValue$lambda$_1_0",
+      "vtable": 64961,
+      "clinit": null
+    },
+    {
+      "global": 26908,
+      "name": "net.minecraft.util.profiling.jfr.JfrProfiler$networkStatFor$lambda$_14_0",
+      "vtable": 121164,
+      "clinit": null
+    },
+    {
+      "global": 18291,
+      "name": "net.minecraft.world.entity.player.ProfilePublicKey$ValidationException",
+      "vtable": 35261,
+      "clinit": null
+    },
+    {
+      "global": 35341,
+      "name": "com.mojang.authlib.yggdrasil.YggdrasilGameProfileRepository",
+      "vtable": 124295,
+      "clinit": 137597
+    },
+    {
+      "global": 76733,
+      "name": "net.lax1dude.eaglercraft.v1_8.profile.EaglerDefaultUsernameNoteScreen",
+      "vtable": 2698,
+      "clinit": null
+    },
+    {
+      "global": 77037,
+      "name": "net.minecraft.client.gui.render.pip.GuiProfilerChartRenderer$renderToTexture$lambda$_2_0",
+      "vtable": 77038,
+      "clinit": null
+    },
+    {
+      "global": 77039,
+      "name": "net.minecraft.client.gui.render.pip.GuiProfilerChartRenderer$renderToTexture$lambda$_2_1",
+      "vtable": 77040,
+      "clinit": null
+    },
+    {
+      "global": 78027,
+      "name": "com.mojang.authlib.yggdrasil.ProfileNotFoundException",
+      "vtable": 31933,
+      "clinit": null
+    },
+    {
+      "global": 44556,
+      "name": "net.lax1dude.eaglercraft.v1_8.profile.EaglerCapeScreen26",
+      "vtable": 2704,
+      "clinit": 169972
+    },
+    {
+      "global": 79468,
+      "name": "net.lax1dude.eaglercraft.v1_8.profile.EaglerImportExportScreen26",
+      "vtable": 2631,
+      "clinit": null
+    }
+  ],
+  "functions": [
+    {
+      "fid": 12632,
+      "lines": 522,
+      "strings": [
+        [
+          57544,
+          "Edit Profile"
+        ],
+        [
+          155599,
+          "editProfile.title"
+        ]
+      ],
+      "calls": {
+        "107": 1,
+        "108": 1,
+        "104": 3,
+        "98": 11,
+        "102": 8,
+        "100": 12,
+        "103": 8,
+        "113": 1,
+        "101": 5,
+        "339": 1,
+        "1999": 1,
+        "2218": 1,
+        "99": 11,
+        "105": 3
+      },
+      "allocs": [
+        1280,
+        4653,
+        7504
+      ],
+      "type": 87759,
+      "p0type": 24019,
+      "fields": [],
+      "consts": [],
+      "wanted_strings": [
+        [
+          57544,
+          "Edit Profile"
+        ],
+        [
+          155599,
+          "editProfile.title"
+        ]
+      ]
+    },
+    {
+      "fid": 18848,
+      "lines": 996,
+      "strings": [
+        [
+          51091,
+          "menu.options"
+        ],
+        [
+          91023,
+          "menu.returnToGame"
+        ],
+        [
+          91027,
+          "menu.sendFeedback"
+        ],
+        [
+          91028,
+          "menu.reportBugs"
+        ],
+        [
+          91029,
+          "menu.multiplayerOptions.button"
+        ],
+        [
+          91031,
+          "menu.playerReporting"
+        ],
+        [
+          91032,
+          "menu.game"
+        ],
+        [
+          91033,
+          "menu.paused"
+        ],
+        [
+          91034,
+          "menu.custom_options.tooltip"
+        ],
+        [
+          91036,
+          "menu.playerReporting.no_players"
+        ]
+      ],
+      "calls": {
+        "107": 1,
+        "108": 1,
+        "104": 1,
+        "98": 28,
+        "102": 1,
+        "100": 2,
+        "103": 1,
+        "113": 12,
+        "99": 28,
+        "105": 1
+      },
+      "allocs": [
+        50,
+        1280,
+        4653,
+        5987,
+        7504
+      ],
+      "type": 0,
+      "p0type": null,
+      "fields": [],
+      "consts": [],
+      "wanted_strings": [
+        [
+          51091,
+          "menu.options"
+        ]
+      ]
+    },
+    {
+      "fid": 20478,
+      "lines": 2768,
+      "strings": [
+        [
+          51091,
+          "menu.options"
+        ]
+      ],
+      "calls": {
+        "107": 1,
+        "108": 1,
+        "104": 7,
+        "98": 54,
+        "118": 1,
+        "101": 22,
+        "34916": 1,
+        "100": 45,
+        "99": 54,
+        "102": 20,
+        "103": 20,
+        "4": 1,
+        "34918": 1,
+        "34917": 1,
+        "10290": 1,
+        "1791": 5,
+        "106": 2,
+        "10291": 1,
+        "113": 2,
+        "387": 2,
+        "367": 2,
+        "389": 2,
+        "388": 2,
+        "277": 4,
+        "116": 2,
+        "413": 2,
+        "34919": 1,
+        "12": 1,
+        "16": 1,
+        "7570": 1,
+        "119": 1,
+        "105": 7
+      },
+      "allocs": [
+        898,
+        1280,
+        3613,
+        3860,
+        4653,
+        7504,
+        11189,
+        14668,
+        19472,
+        19473,
+        45740,
+        86549,
+        86550,
+        91892,
+        91893,
+        91894,
+        91895,
+        91896,
+        91897,
+        91898,
+        91899,
+        91900
+      ],
+      "type": 54533,
+      "p0type": 23188,
+      "fields": [],
+      "consts": [],
+      "wanted_strings": [
+        [
+          51091,
+          "menu.options"
+        ]
+      ]
+    },
+    {
+      "fid": 34917,
+      "lines": 1956,
+      "strings": [
+        [
+          57544,
+          "Edit Profile"
+        ],
+        [
+          104453,
+          "menu.singleplayer"
+        ],
+        [
+          104454,
+          "menu.multiplayer"
+        ],
+        [
+          104455,
+          "eagler.menu.profile"
+        ]
+      ],
+      "calls": {
+        "107": 1,
+        "108": 1,
+        "104": 6,
+        "98": 39,
+        "102": 6,
+        "100": 28,
+        "103": 6,
+        "113": 4,
+        "101": 16,
+        "387": 4,
+        "367": 4,
+        "389": 4,
+        "388": 4,
+        "277": 4,
+        "99": 39,
+        "1791": 4,
+        "106": 2,
+        "37791": 1,
+        "105": 6
+      },
+      "allocs": [
+        50,
+        898,
+        1280,
+        3613,
+        4653,
+        5987,
+        7504,
+        11189,
+        14668,
+        45740,
+        104449,
+        104450,
+        104451,
+        104452
+      ],
+      "type": 46014,
+      "p0type": 23188,
+      "fields": [],
+      "consts": [],
+      "wanted_strings": [
+        [
+          57544,
+          "Edit Profile"
+        ],
+        [
+          104453,
+          "menu.singleplayer"
+        ],
+        [
+          104454,
+          "menu.multiplayer"
+        ]
+      ]
+    },
+    {
+      "fid": 105585,
+      "lines": 577,
+      "strings": [
+        [
+          149966,
+          "editProfile.username"
+        ],
+        [
+          149968,
+          "editProfile.playerSkin"
+        ],
+        [
+          149971,
+          "editProfile.addSkin"
+        ],
+        [
+          149974,
+          "editProfile.clearSkin"
+        ],
+        [
+          149976,
+          "editProfile.steveOrAlex"
+        ]
+      ],
+      "calls": {
+        "107": 1,
+        "108": 1,
+        "104": 1,
+        "98": 13,
+        "102": 2,
+        "100": 3,
+        "103": 2,
+        "113": 7,
+        "101": 2,
+        "99": 13,
+        "105": 1
+      },
+      "allocs": [
+        1280,
+        4653,
+        7504,
+        11189
+      ],
+      "type": 0,
+      "p0type": null,
+      "fields": [],
+      "consts": [],
+      "wanted_strings": [
+        [
+          149966,
+          "editProfile.username"
+        ],
+        [
+          149968,
+          "editProfile.playerSkin"
+        ],
+        [
+          149971,
+          "editProfile.addSkin"
+        ],
+        [
+          149974,
+          "editProfile.clearSkin"
+        ],
+        [
+          149976,
+          "editProfile.steveOrAlex"
+        ]
+      ]
+    },
+    {
+      "fid": 141204,
+      "lines": 8657,
+      "strings": [
+        [
+          76756,
+          "editProfile.importExport"
+        ],
+        [
+          156267,
+          "editProfile.capes"
+        ]
+      ],
+      "calls": {
+        "107": 1,
+        "108": 1,
+        "104": 8,
+        "98": 75,
+        "118": 1,
+        "101": 122,
+        "102": 37,
+        "100": 108,
+        "103": 37,
+        "4": 4,
+        "129": 36,
+        "109": 36,
+        "113": 5,
+        "424": 2,
+        "99": 75,
+        "116": 6,
+        "413": 4,
+        "277": 7,
+        "106": 4,
+        "6785": 1,
+        "6784": 1,
+        "397": 2,
+        "1471": 1,
+        "121": 2,
+        "112": 2,
+        "117": 2,
+        "431": 3,
+        "369": 3,
+        "387": 3,
+        "367": 3,
+        "389": 3,
+        "388": 3,
+        "142974": 1,
+        "105": 8,
+        "119": 1
+      },
+      "allocs": [
+        14,
+        898,
+        1280,
+        3613,
+        3860,
+        4653,
+        5198,
+        7504,
+        7533,
+        14668,
+        17734,
+        18586,
+        19472,
+        24549,
+        31065,
+        45740,
+        86549,
+        86550,
+        91246,
+        156254,
+        156255,
+        156256,
+        156257,
+        156258,
+        156259,
+        156260,
+        156261,
+        156262,
+        156263,
+        156264,
+        156265,
+        156266
+      ],
+      "type": 39111,
+      "p0type": 24019,
+      "fields": [],
+      "consts": [],
+      "wanted_strings": [
+        [
+          76756,
+          "editProfile.importExport"
+        ],
+        [
+          156267,
+          "editProfile.capes"
+        ]
+      ]
+    },
+    {
+      "fid": 169968,
+      "lines": 5980,
+      "strings": [
+        [
+          76756,
+          "editProfile.importExport"
+        ]
+      ],
+      "calls": {
+        "107": 1,
+        "108": 1,
+        "104": 8,
+        "98": 61,
+        "118": 1,
+        "101": 83,
+        "102": 27,
+        "100": 75,
+        "103": 27,
+        "4": 3,
+        "129": 27,
+        "109": 27,
+        "113": 4,
+        "424": 1,
+        "99": 61,
+        "116": 4,
+        "413": 2,
+        "277": 5,
+        "6784": 1,
+        "106": 2,
+        "397": 1,
+        "387": 3,
+        "367": 3,
+        "389": 3,
+        "388": 3,
+        "176368": 1,
+        "105": 8,
+        "119": 1
+      },
+      "allocs": [
+        898,
+        1280,
+        3613,
+        3860,
+        4653,
+        7504,
+        7533,
+        14668,
+        17734,
+        19472,
+        24549,
+        27715,
+        31065,
+        45740,
+        86549,
+        86550,
+        91246,
+        168978,
+        168979,
+        168980,
+        168981,
+        168982,
+        168983,
+        168984,
+        168985,
+        168986
+      ],
+      "type": 42576,
+      "p0type": 25821,
+      "fields": [],
+      "consts": [],
+      "wanted_strings": [
+        [
+          76756,
+          "editProfile.importExport"
+        ]
+      ]
+    },
+    {
+      "fid": 179707,
+      "lines": 10003,
+      "strings": [
+        [
+          6409,
+          "profile"
+        ],
+        [
+          14754,
+          "MULTIPLAYER"
+        ],
+        [
+          19700,
+          "options.modelPart."
+        ],
+        [
+          23616,
+          "SINGLEPLAYER"
+        ],
+        [
+          24043,
+          "subtitle"
+        ],
+        [
+          24057,
+          "gameProfile"
+        ],
+        [
+          29216,
+          "Invalid profile texture url"
+        ],
+        [
+          33247,
+          "options.off"
+        ],
+        [
+          33276,
+          ", title="
+        ],
+        [
+          33562,
+          "title="
+        ],
+        [
+          38555,
+          "menu.savingLevel"
+        ],
+        [
+          38635,
+          "multiplayer"
+        ],
+        [
+          38929,
+          "OPTIONS"
+        ],
+        [
+          39098,
+          "gui.toTitle"
+        ],
+        [
+          39138,
+          "profile="
+        ],
+        [
+          50944,
+          "options.telemetry.state.minimal"
+        ],
+        [
+          50945,
+          "options.telemetry.state.all"
+        ],
+        [
+          50992,
+          "ServerPlatformSingleplayer"
+        ],
+        [
+          50995,
+          "ClientPlatformSingleplayer"
+        ],
+        [
+          51091,
+          "menu.options"
+        ],
+        [
+          51375,
+          "multiplayer.disconnect.invalid_packet"
+        ],
+        [
+          51463,
+          "SingleplayerServerController26"
+        ],
+        [
+          51467,
+          "deathScreen.titleScreen"
+        ],
+        [
+          51469,
+          "menu.modded"
+        ],
+        [
+          53779,
+          "DEBUG_PROFILE"
+        ],
+        [
+          54317,
+          "PROFILE_PROPERTY"
+        ],
+        [
+          54318,
+          "PROFILE_KEY"
+        ],
+        [
+          54361,
+          "options="
+        ],
+        [
+          54968,
+          "options.improvedTransparency"
+        ],
+        [
+          56316,
+          "options.musicToast.never"
+        ],
+        [
+          56317,
+          "options.musicToast.pauseMenu"
+        ],
+        [
+          56320,
+          "options.musicToast.pauseMenuAndToast"
+        ],
+        [
+          57098,
+          "profileId="
+        ],
+        [
+          57537,
+          "menu.multiplayerOptions.network."
+        ],
+        [
+          57544,
+          "Edit Profile"
+        ],
+        [
+          57549,
+          "options.language"
+        ],
+        [
+          57551,
+          "options.accessibility"
+        ],
+        [
+          58056,
+          "profiles"
+        ],
+        [
+          90138,
+          "net.lax1dude.eaglercraft.v1_8.sp.ipc.IPCPacket20OptionsSnapshot"
+        ],
+        [
+          90311,
+          "net.minecraft.util.profiling.metrics.ProfilerMeasured"
+        ],
+        [
+          90378,
+          "com.mojang.authlib.minecraft.MinecraftProfileTexture"
+        ],
+        [
+          90509,
+          "multiplayer.status.quitting"
+        ],
+        [
+          90648,
+          "options.needsRestart"
+        ],
+        [
+          90649,
+          "options.darkMojangStudiosBackgroundColor.tooltip"
+        ],
+        [
+          90651,
+          "options.hideLightningFlashes.tooltip"
+        ],
+        [
+          90653,
+          "options.hideSplashTexts.tooltip"
+        ],
+        [
+          90655,
+          "options.graphicsApi.tooltip"
+        ],
+        [
+          90657,
+          "options.graphicsApi.tooltip.vulkan"
+        ],
+        [
+          90659,
+          "options.inactivityFpsLimit.minimized.tooltip"
+        ],
+        [
+          90661,
+          "options.inactivityFpsLimit.afk.tooltip"
+        ],
+        [
+          90663,
+          "options.weatherRadius.tooltip"
+        ],
+        [
+          90665,
+          "options.cutoutLeaves.tooltip"
+        ],
+        [
+          90667,
+          "options.vignette.tooltip"
+        ],
+        [
+          90669,
+          "options.improvedTransparency.tooltip"
+        ],
+        [
+          90671,
+          "options.chunkFade.tooltip"
+        ],
+        [
+          90673,
+          "options.prioritizeChunkUpdates.none.tooltip"
+        ],
+        [
+          90675,
+          "options.prioritizeChunkUpdates.byPlayer.tooltip"
+        ],
+        [
+          90677,
+          "options.prioritizeChunkUpdates.nearby.tooltip"
+        ],
+        [
+          90679,
+          "options.accessibility.menu_background_blurriness.tooltip"
+        ],
+        [
+          90681,
+          "options.accessibility.high_contrast.tooltip"
+        ],
+        [
+          90683,
+          "options.accessibility.high_contrast_block_outline.tooltip"
+        ],
+        [
+          90685,
+          "options.notifications.display_time.tooltip"
+        ],
+        [
+          90687,
+          "options.maxAnisotropy.tooltip"
+        ],
+        [
+          90689,
+          "options.textureFiltering.none.tooltip"
+        ],
+        [
+          90691,
+          "options.textureFiltering.rgss.tooltip"
+        ],
+        [
+          90693,
+          "options.textureFiltering.anisotropic.tooltip"
+        ],
+        [
+          90695,
+          "options.rdpMouse.tooltip"
+        ],
+        [
+          90697,
+          "options.eaglerTouchControls.tooltip"
+        ],
+        [
+          90699,
+          "options.allowCursorChanges.tooltip"
+        ],
+        [
+          90701,
+          "options.rotateWithMinecart.tooltip"
+        ],
+        [
+          90703,
+          "options.realmsNotifications.tooltip"
+        ],
+        [
+          90705,
+          "options.allowServerListing.tooltip"
+        ],
+        [
+          90707,
+          "options.inGameNotification.tooltip"
+        ],
+        [
+          90709,
+          "options.showSubtitles.tooltip"
+        ],
+        [
+          90711,
+          "options.directionalAudio.on.tooltip"
+        ],
+        [
+          90713,
+          "options.directionalAudio.off.tooltip"
+        ],
+        [
+          90715,
+          "options.exclusiveFullscreen.on.tooltip"
+        ],
+        [
+          90717,
+          "options.exclusiveFullscreen.off.tooltip"
+        ],
+        [
+          90719,
+          "options.key.toggle"
+        ],
+        [
+          90720,
+          "options.key.hold"
+        ],
+        [
+          90721,
+          "options.sprintWindow.tooltip"
+        ],
+        [
+          90723,
+          "options.hideMatchedNames.tooltip"
+        ],
+        [
+          90725,
+          "options.onlyShowSecureChat.tooltip"
+        ],
+        [
+          90727,
+          "options.chat.drafts.tooltip"
+        ],
+        [
+          90729,
+          "options.telemetry.button.tooltip"
+        ],
+        [
+          90731,
+          "options.screenEffectScale.tooltip"
+        ],
+        [
+          90733,
+          "options.fovEffectScale.tooltip"
+        ],
+        [
+          90735,
+          "options.darknessEffectScale.tooltip"
+        ],
+        [
+          90737,
+          "options.glintSpeed.tooltip"
+        ],
+        [
+          90739,
+          "options.glintStrength.tooltip"
+        ],
+        [
+          90741,
+          "options.damageTiltStrength.tooltip"
+        ],
+        [
+          90743,
+          "options.music_frequency.tooltip"
+        ],
+        [
+          91013,
+          "multiplayer.socialInteractions.not_available"
+        ],
+        [
+          91023,
+          "menu.returnToGame"
+        ],
+        [
+          91027,
+          "menu.sendFeedback"
+        ],
+        [
+          91028,
+          "menu.reportBugs"
+        ],
+        [
+          91029,
+          "menu.multiplayerOptions.button"
+        ],
+        [
+          91031,
+          "menu.playerReporting"
+        ],
+        [
+          91032,
+          "menu.game"
+        ],
+        [
+          91033,
+          "menu.paused"
+        ],
+        [
+          91034,
+          "menu.custom_options.tooltip"
+        ],
+        [
+          91036,
+          "menu.playerReporting.no_players"
+        ],
+        [
+          91055,
+          "debug.options.title"
+        ],
+        [
+          91056,
+          "debug.options.warning"
+        ],
+        [
+          91059,
+          "debug.options.notAllowed.tooltip"
+        ],
+        [
+          91061,
+          "debug.options.search"
+        ],
+        [
+          91070,
+          "controls.keybinds.title"
+        ],
+        [
+          91454,
+          "options.graphicsApi.default"
+        ],
+        [
+          91455,
+          "options.graphicsApi.opengl"
+        ],
+        [
+          91456,
+          "options.graphicsApi.vulkan"
+        ],
+        [
+          91504,
+          "debug.options.profile.default"
+        ],
+        [
+          91505,
+          "debug.options.profile.performance"
+        ],
+        [
+          91648,
+          "multiplayer.disconnect.bad_chat_index"
+        ],
+        [
+          91650,
+          "multiplayer.confirm_command.title"
+        ],
+        [
+          91652,
+          "multiplayer.confirm_command.run_command"
+        ],
+        [
+          91653,
+          "multiplayer.confirm_command.suggest_command"
+        ],
+        [
+          91664,
+          "options.narrator.off"
+        ],
+        [
+          91665,
+          "options.narrator.all"
+        ],
+        [
+          91666,
+          "options.narrator.chat"
+        ],
+        [
+          91667,
+          "options.narrator.system"
+        ],
+        [
+          91762,
+          "SUBTITLES"
+        ],
+        [
+          91794,
+          "textures/gui/title/background/panorama_overlay.png"
+        ],
+        [
+          91817,
+          "multiplayer.disconnect.duplicate_login"
+        ],
+        [
+          91902,
+          "narrator.screen.title"
+        ],
+        [
+          91903,
+          "title.credits"
+        ],
+        [
+          91913,
+          "textures/gui/title/minecraft.png"
+        ],
+        [
+          91915,
+          "textures/gui/title/minceraft.png"
+        ],
+        [
+          91916,
+          "textures/gui/title/edition.png"
+        ],
+        [
+          91974,
+          "GameProfile["
+        ],
+        [
+          94283,
+          "options.mainHand.left"
+        ],
+        [
+          94284,
+          "options.mainHand.right"
+        ],
+        [
+          94687,
+          "options.music_frequency.default"
+        ],
+        [
+          94688,
+          "options.music_frequency.frequent"
+        ],
+        [
+          94689,
+          "options.music_frequency.constant"
+        ],
+        [
+          94701,
+          "singleplayer"
+        ],
+        [
+          94721,
+          "spectatorMenu.close"
+        ],
+        [
+          94723,
+          "spectatorMenu.previous_page"
+        ],
+        [
+          94725,
+          "spectatorMenu.next_page"
+        ],
+        [
+          94761,
+          "language="
+        ],
+        [
+          94904,
+          "ProfilePublicKey["
+        ],
+        [
+          94907,
+          "multiplayer.disconnect.expired_public_key"
+        ],
+        [
+          94908,
+          "multiplayer.disconnect.invalid_public_key_signature"
+        ],
+        [
+          95142,
+          "options.textureFiltering.none"
+        ],
+        [
+          95143,
+          "options.textureFiltering.rgss"
+        ],
+        [
+          95144,
+          "options.textureFiltering.anisotropic"
+        ],
+        [
+          95147,
+          "options.clouds.fast"
+        ],
+        [
+          95148,
+          "options.clouds.fancy"
+        ],
+        [
+          95153,
+          "options.prioritizeChunkUpdates.none"
+        ],
+        [
+          95154,
+          "options.prioritizeChunkUpdates.byPlayer"
+        ],
+        [
+          95155,
+          "options.prioritizeChunkUpdates.nearby"
+        ],
+        [
+          95196,
+          "ProfileKeyPair["
+        ],
+        [
+          95208,
+          "options.chat.visibility.full"
+        ],
+        [
+          95209,
+          "options.chat.visibility.system"
+        ],
+        [
+          95210,
+          "options.chat.visibility.hidden"
+        ],
+        [
+          95216,
+          "options.particles.all"
+        ],
+        [
+          95217,
+          "options.particles.decreased"
+        ],
+        [
+          95218,
+          "options.particles.minimal"
+        ],
+        [
+          95229,
+          "multiplayer.disconnect.chat_validation_failed"
+        ],
+        [
+          95231,
+          "multiplayer.disconnect.unexpected_query_response"
+        ],
+        [
+          95861,
+          ", profilePublicKey="
+        ],
+        [
+          95946,
+          "options.graphics.warning.renderer"
+        ],
+        [
+          95947,
+          "options.graphics.warning.vendor"
+        ],
+        [
+          95948,
+          "options.graphics.warning.version"
+        ],
+        [
+          95960,
+          "options.fullscreen.resolution"
+        ],
+        [
+          95965,
+          "options.videoTitle"
+        ],
+        [
+          95967,
+          "options.graphics.warning.message"
+        ],
+        [
+          95968,
+          "options.graphics.warning.title"
+        ],
+        [
+          95969,
+          "options.graphics.warning.accept"
+        ],
+        [
+          95970,
+          "options.graphics.warning.cancel"
+        ],
+        [
+          95971,
+          "options.video.display.header"
+        ],
+        [
+          95972,
+          "options.video.quality.header"
+        ],
+        [
+          95973,
+          "options.video.preferences.header"
+        ],
+        [
+          95974,
+          "options.restartRequired"
+        ],
+        [
+          95976,
+          "options.on"
+        ],
+        [
+          95989,
+          "menu.disconnect"
+        ],
+        [
+          95990,
+          "menu.returnToMenu"
+        ],
+        [
+          96451,
+          "SerializedOptions["
+        ],
+        [
+          96573,
+          "textures/gui/title/mojangstudios.png"
+        ],
+        [
+          96601,
+          "Profiler tick already ended - missing startTick()?"
+        ],
+        [
+          96602,
+          "Profiler tick ended before path was fully popped (remainder: '{}'). Mismatched push/pop?"
+        ],
+        [
+          96603,
+          "Profiler tick already started - missing endTick()?"
+        ],
+        [
+          96606,
+          "Cannot pop from profiler if profiler tick hasn't started - missing startTick()?"
+        ],
+        [
+          96609,
+          "Cannot push '{}' to profiler if profiler tick hasn't started - missing startTick()?"
+        ],
+        [
+          96680,
+          "javaTitleCase"
+        ],
+        [
+          99258,
+          "multiplayer.downloadingTerrain"
+        ],
+        [
+          99271,
+          "debug.options.category.text"
+        ],
+        [
+          99273,
+          "debug.options.category.renderer"
+        ],
+        [
+          99534,
+          "options.attack.crosshair"
+        ],
+        [
+          99535,
+          "options.attack.hotbar"
+        ],
+        [
+          99586,
+          "GuiProfilerChartRenderState["
+        ],
+        [
+          99718,
+          "Minecraft Profiler Results"
+        ],
+        [
+          99737,
+          "I'm sorry, I don't speak that language"
+        ],
+        [
+          100367,
+          "Integrated singleplayer server"
+        ],
+        [
+          100368,
+          "Non-integrated multiplayer server"
+        ],
+        [
+          103734,
+          "options.inactivityFpsLimit.minimized"
+        ],
+        [
+          103736,
+          "options.inactivityFpsLimit.afk"
+        ],
+        [
+          104262,
+          "Skipped language file: {}:{} ({})"
+        ],
+        [
+          104263,
+          "Missing subtitle {} for sound event: {}"
+        ],
+        [
+          104355,
+          "multiplayer.disconnect.server_shutdown"
+        ],
+        [
+          104453,
+          "menu.singleplayer"
+        ],
+        [
+          104454,
+          "menu.multiplayer"
+        ],
+        [
+          104455,
+          "eagler.menu.profile"
+        ],
+        [
+          104458,
+          "menu.playdemo"
+        ],
+        [
+          104459,
+          "menu.resetdemo"
+        ],
+        [
+          104462,
+          "icon/language"
+        ],
+        [
+          104463,
+          "options.language.tooltip"
+        ],
+        [
+          104467,
+          "options.accessibility.tooltip"
+        ],
+        [
+          104688,
+          "Ignoring malformed resource-pack list in options"
+        ],
+        [
+          104804,
+          "USERPROFILE"
+        ],
+        [
+          104806,
+          "-Dio.netty.tmpdir: {} (%USERPROFILE%\\AppData\\Local\\Temp)"
+        ],
+        [
+          104808,
+          "-Dio.netty.tmpdir: {} (%USERPROFILE%\\Local Settings\\Temp)"
+        ],
+        [
+          105631,
+          "title.multiplayer.disabled.banned.name"
+        ],
+        [
+          105632,
+          "title.multiplayer.disabled"
+        ],
+        [
+          105633,
+          "title.multiplayer.disabled.banned.permanent"
+        ],
+        [
+          105634,
+          "title.multiplayer.disabled.banned.temporary"
+        ],
+        [
+          105787,
+          "DATA_PROFILE"
+        ],
+        [
+          105794,
+          "DEFAULT_PROFILE"
+        ]
+      ],
+      "calls": {
+        "3607": 1
+      },
+      "allocs": [],
+      "type": 0,
+      "p0type": null,
+      "fields": [],
+      "consts": [],
+      "wanted_strings": [
+        [
+          51091,
+          "menu.options"
+        ],
+        [
+          57544,
+          "Edit Profile"
+        ],
+        [
+          104453,
+          "menu.singleplayer"
+        ],
+        [
+          104454,
+          "menu.multiplayer"
+        ]
+      ]
+    },
+    {
+      "fid": 179712,
+      "lines": 10003,
+      "strings": [
+        [
+          9170,
+          "options.percent_value"
+        ],
+        [
+          14084,
+          "Profile ID must not be null"
+        ],
+        [
+          14085,
+          "Profile properties must not be null"
+        ],
+        [
+          14153,
+          "selectWorld.title"
+        ],
+        [
+          16033,
+          "Profile name must not be null"
+        ],
+        [
+          18463,
+          "generatorOptions"
+        ],
+        [
+          27272,
+          "multiplayer.title"
+        ],
+        [
+          35890,
+          "legacy_custom_options"
+        ],
+        [
+          36027,
+          "Multiplayer: Wispcraft selected"
+        ],
+        [
+          36072,
+          "multiplayer.status.cancelled"
+        ],
+        [
+          36213,
+          "options.difficulty."
+        ],
+        [
+          43502,
+          "particle_options"
+        ],
+        [
+          43689,
+          "multiplayer.status.pinging"
+        ],
+        [
+          43705,
+          "multiplayer.status.cannot_connect"
+        ],
+        [
+          43941,
+          "options.chunks"
+        ],
+        [
+          43942,
+          "options.off.composed"
+        ],
+        [
+          43943,
+          "options.pixel_value"
+        ],
+        [
+          71088,
+          "OptionsKeyLwjgl3Fix"
+        ],
+        [
+          71212,
+          "LevelDataGeneratorOptionsFix"
+        ],
+        [
+          73234,
+          "options.sounds"
+        ],
+        [
+          73413,
+          "Multiplayer: Wispcraft selected. Open Wisp Settings."
+        ],
+        [
+          73539,
+          "multiplayer.status.motd.narration"
+        ],
+        [
+          74802,
+          "OptionsForceVBOFix"
+        ],
+        [
+          74811,
+          "OptionsLowerCaseLanguageFix"
+        ],
+        [
+          74815,
+          "OptionsKeyTranslationFix"
+        ],
+        [
+          74859,
+          "OptionsAddTextBackgroundFix"
+        ],
+        [
+          74921,
+          "OptionsProgrammerArtFix"
+        ],
+        [
+          74923,
+          "OptionsAmbientOcclusionFix"
+        ],
+        [
+          74925,
+          "OptionsAccessibilityOnboardFix"
+        ],
+        [
+          74952,
+          "OptionsMenuBlurrinessFix"
+        ],
+        [
+          74997,
+          "DebugProfileOverlayReferenceFix"
+        ],
+        [
+          75004,
+          "OptionsMusicToastFix"
+        ],
+        [
+          75006,
+          "DebugProfileLookingAtSplitFix"
+        ],
+        [
+          75015,
+          "OptionsForceDefaultGraphicsApiFix"
+        ],
+        [
+          75435,
+          "options.multiplier"
+        ],
+        [
+          75441,
+          "options.narrator.notavailable"
+        ],
+        [
+          75732,
+          "options.difficulty"
+        ],
+        [
+          76545,
+          "options.sharePresence."
+        ],
+        [
+          76756,
+          "editProfile.importExport"
+        ],
+        [
+          76773,
+          "singleplayer.create.title"
+        ],
+        [
+          142959,
+          "restrictions_screen.title"
+        ],
+        [
+          142978,
+          "options.language.narration"
+        ],
+        [
+          142999,
+          ", initialWorldCreationOptions="
+        ],
+        [
+          143021,
+          "chat_restriction.chat_and_commands_disabled_by_options"
+        ],
+        [
+          143023,
+          "chat_restriction.chat_disabled_by_options"
+        ],
+        [
+          143025,
+          "chat_restriction.disabled_by_profile"
+        ],
+        [
+          143205,
+          "InitialWorldCreationOptions["
+        ],
+        [
+          143218,
+          "WorldGenSettings[options="
+        ],
+        [
+          143718,
+          "custom_options"
+        ],
+        [
+          143751,
+          "SculkChargeParticleOptions["
+        ],
+        [
+          143786,
+          "ProfileResult["
+        ],
+        [
+          143797,
+          "Failed to parse deprecated language data: "
+        ],
+        [
+          143855,
+          "ProfileSearchResultsResponse["
+        ],
+        [
+          143856,
+          "profiles="
+        ],
+        [
+          144611,
+          ", externalTitle="
+        ],
+        [
+          144967,
+          "Singleplayer"
+        ],
+        [
+          144968,
+          "Multiplayer"
+        ],
+        [
+          145308,
+          "MultilineOptions["
+        ],
+        [
+          145503,
+          "options.graphics.fast"
+        ],
+        [
+          145505,
+          "options.graphics.fancy"
+        ],
+        [
+          145507,
+          "options.graphics.fabulous"
+        ],
+        [
+          145508,
+          "options.graphics.custom"
+        ],
+        [
+          146414,
+          ", profilesHost="
+        ],
+        [
+          146724,
+          "container.grindstone_title"
+        ],
+        [
+          147188,
+          "createWorld.tab.game.title"
+        ],
+        [
+          147191,
+          "createWorld.tab.world.title"
+        ],
+        [
+          147255,
+          "multiplayer.access.banned"
+        ],
+        [
+          147263,
+          "spectatorMenu.teleport"
+        ],
+        [
+          147264,
+          "spectatorMenu.teleport.prompt"
+        ],
+        [
+          147269,
+          "spectatorMenu.team_teleport"
+        ],
+        [
+          147270,
+          "spectatorMenu.team_teleport.prompt"
+        ],
+        [
+          147479,
+          "createWorld.tab.more.title"
+        ],
+        [
+          148743,
+          "multiplayer.disconnect.code_of_conduct"
+        ],
+        [
+          149115,
+          "component.profile.dynamic"
+        ],
+        [
+          149123,
+          "chat_restriction.disabled_by_profile.action"
+        ],
+        [
+          149124,
+          "chat_restriction.chat_disabled_by_options.action"
+        ],
+        [
+          149295,
+          "accessibility.onboarding.screen.title"
+        ],
+        [
+          149299,
+          "QuickPlaySinglePlayerData["
+        ],
+        [
+          149303,
+          "QuickPlayMultiplayerData["
+        ],
+        [
+          149549,
+          "LAN + Multiplayer default - "
+        ],
+        [
+          149551,
+          "Multiplayer default - "
+        ],
+        [
+          149552,
+          "[Multiplayer inactive] "
+        ],
+        [
+          149558,
+          "LAN and Multiplayer default "
+        ],
+        [
+          149560,
+          "Multiplayer default "
+        ],
+        [
+          149647,
+          "GeyserParticleOptions["
+        ],
+        [
+          149648,
+          "GeyserBaseParticleOptions["
+        ],
+        [
+          149766,
+          "multiplayer.status.incompatible"
+        ],
+        [
+          149767,
+          "multiplayer.status.no_connection"
+        ],
+        [
+          149768,
+          "multiplayer.status.online"
+        ],
+        [
+          149807,
+          "pack.incompatible.confirm.title"
+        ],
+        [
+          149819,
+          "pack.available.title"
+        ],
+        [
+          149820,
+          "pack.selected.title"
+        ],
+        [
+          149840,
+          "options.font"
+        ],
+        [
+          149841,
+          "options.languageAccuracyWarning"
+        ],
+        [
+          149842,
+          "gui.language.search"
+        ],
+        [
+          149843,
+          "editGamerule.title"
+        ],
+        [
+          149875,
+          "createWorld.customize.flat.title"
+        ],
+        [
+          149879,
+          "lanServer.title"
+        ],
+        [
+          149883,
+          "multiplayer.status.version.narration"
+        ],
+        [
+          149884,
+          "multiplayer.status.ping.narration"
+        ],
+        [
+          149885,
+          "multiplayer.status.player_count.narration"
+        ],
+        [
+          149904,
+          "argument.entity.options.unterminated"
+        ],
+        [
+          149913,
+          "upgradeWorld.canceled.title"
+        ],
+        [
+          149966,
+          "editProfile.username"
+        ],
+        [
+          149968,
+          "editProfile.playerSkin"
+        ],
+        [
+          149971,
+          "editProfile.addSkin"
+        ],
+        [
+          149974,
+          "editProfile.clearSkin"
+        ],
+        [
+          149976,
+          "editProfile.steveOrAlex"
+        ],
+        [
+          150013,
+          "MinecraftProfileTextures["
+        ],
+        [
+          150723,
+          "singleplayer.create.create"
+        ],
+        [
+          150725,
+          "singleplayer.create.import.epk"
+        ],
+        [
+          150727,
+          "singleplayer.create.import.vanilla"
+        ],
+        [
+          150729,
+          "singleplayer.import.invalidFile"
+        ],
+        [
+          150825,
+          "selectWorld.experimental.details.title"
+        ],
+        [
+          150832,
+          "selectWorld.experimental.title"
+        ],
+        [
+          150859,
+          "LanguageMetadataSection["
+        ],
+        [
+          150860,
+          "languages="
+        ],
+        [
+          150890,
+          "singleplayer.backup.recreate"
+        ],
+        [
+          150892,
+          "singleplayer.backup.duplicate"
+        ],
+        [
+          150894,
+          "singleplayer.backup.seed"
+        ],
+        [
+          150896,
+          "singleplayer.backup.export"
+        ],
+        [
+          150898,
+          "singleplayer.backup.vanilla"
+        ],
+        [
+          150900,
+          "singleplayer.backup.clearPlayerData"
+        ],
+        [
+          151227,
+          "multiplayer.status.finished"
+        ],
+        [
+          151250,
+          ", profileId="
+        ],
+        [
+          151652,
+          "ClientboundSetSubtitleTextPacket["
+        ],
+        [
+          151665,
+          "ClientboundSetTitleTextPacket["
+        ],
+        [
+          151769,
+          "gameProfile="
+        ],
+        [
+          151952,
+          "profileIds="
+        ],
+        [
+          152144,
+          ", options="
+        ],
+        [
+          152228,
+          "recipe.toast.title"
+        ],
+        [
+          152236,
+          "editGamerule.inGame.discardChanges.title"
+        ],
+        [
+          152246,
+          ", profile="
+        ],
+        [
+          152270,
+          "multiplayer.downloadingStats"
+        ],
+        [
+          152394,
+          "book.view.title"
+        ],
+        [
+          152410,
+          "merchant.title"
+        ],
+        [
+          152530,
+          ", selectedProfile="
+        ],
+        [
+          152647,
+          "advancements/title_box"
+        ],
+        [
+          152952,
+          "profiler chart"
+        ],
+        [
+          152956,
+          "menu.custom_screen_info.disconnect"
+        ],
+        [
+          153587,
+          "gui.waitingForResponse.title"
+        ],
+        [
+          153669,
+          "singleplayer.crashed.desc"
+        ],
+        [
+          153675,
+          "menu.quit"
+        ],
+        [
+          153676,
+          "outOfMemory.title"
+        ],
+        [
+          153691,
+          "argument.entity.options.distance.negative"
+        ],
+        [
+          153693,
+          "argument.entity.options.level.negative"
+        ],
+        [
+          153695,
+          "argument.entity.options.limit.toosmall"
+        ],
+        [
+          153743,
+          "options.framerateLimit.max"
+        ],
+        [
+          153744,
+          "options.framerate"
+        ],
+        [
+          153747,
+          "options.blocks"
+        ],
+        [
+          153752,
+          "options.biomeBlendRadius."
+        ],
+        [
+          153757,
+          "options.accessibility.text_background.everywhere"
+        ],
+        [
+          153758,
+          "options.accessibility.text_background.chat"
+        ],
+        [
+          153759,
+          "options.value"
+        ],
+        [
+          153760,
+          "options.fov.max"
+        ],
+        [
+          153761,
+          "options.fov.min"
+        ],
+        [
+          153762,
+          "options.telemetry.state.none"
+        ],
+        [
+          153763,
+          "options.guiScale.auto"
+        ],
+        [
+          153764,
+          "options.audioDevice.default"
+        ],
+        [
+          153773,
+          "profilekeys"
+        ],
+        [
+          153792,
+          "Could not parse debug profile JSON: "
+        ],
+        [
+          153899,
+          "commands.kick.singleplayer.failed"
+        ],
+        [
+          154022,
+          "multiplayer.disconnect.generic"
+        ],
+        [
+          154024,
+          "multiplayer.stopSleeping"
+        ],
+        [
+          154026,
+          "spectatorMenu.root.prompt"
+        ],
+        [
+          154259,
+          "Unable to parse language metadata section of resourcepack: {}"
+        ],
+        [
+          154365,
+          "Cannot transfer to server from singleplayer"
+        ],
+        [
+          154398,
+          "The Wispcraft endpoint is missing or invalid. Open Multiplayer > Wisp Settings, configure its Wisp URL, then reload the link."
+        ],
+        [
+          154399,
+          "This saved server uses WebSocket routing, but no multiplayer relay is configured. Restore its relay in Relay Settings, then reload the link."
+        ],
+        [
+          154401,
+          "No multiplayer WebSocket relay is configured. Open Multiplayer > Relay Settings, add or restore a relay, then reload the link."
+        ],
+        [
+          154403,
+          "Direct TCP is not available in this installed app. Choose EaglerX in Multiplayer, then reload the link."
+        ],
+        [
+          154854,
+          "options.fullscreen.unavailable"
+        ],
+        [
+          154855,
+          "options.fullscreen.current"
+        ],
+        [
+          154856,
+          "options.fullscreen.entry"
+        ],
+        [
+          154922,
+          "game_profile"
+        ],
+        [
+          155255,
+          "--- BEGIN PROFILE DUMP ---\n\n"
+        ],
+        [
+          155256,
+          "--- END PROFILE DUMP ---\n\n"
+        ],
+        [
+          155593,
+          "serverWorker: prewarming the integrated-server worker for Singleplayer"
+        ],
+        [
+          155596,
+          "singleplayer.integratedStartup"
+        ],
+        [
+          155597,
+          "Failed to retire integrated-server worker during multiplayer handoff"
+        ],
+        [
+          155598,
+          "Remote multiplayer handoff released LAN and integrated-server state"
+        ],
+        [
+          155599,
+          "editProfile.title"
+        ],
+        [
+          155855,
+          "profile/"
+        ],
+        [
+          155857,
+          "Couldn't fetch profile properties for {} as the profile does not exist"
+        ],
+        [
+          155858,
+          "Successfully fetched profile properties for {}"
+        ],
+        [
+          155859,
+          "Couldn't look up profile properties for {}"
+        ],
+        [
+          156025,
+          "Wispcraft returned an invalid Minecraft profile. Sign in again in Wisp Settings."
+        ],
+        [
+          156168,
+          "multiplayer.lan.server_found"
+        ],
+        [
+          156201,
+          "datapackFailure.title"
+        ],
+        [
+          156202,
+          "datapackFailure.safeMode.failed.title"
+        ],
+        [
+          156204,
+          "upgradeWorld.symlink.title"
+        ],
+        [
+          156207,
+          "upgradeWorld.aborted.title"
+        ],
+        [
+          156208,
+          "upgradeWorld.failed_cleanup.title"
+        ],
+        [
+          156245,
+          "eagler: profile Done handler failed; closing to parent. Root cause:"
+        ],
+        [
+          156267,
+          "editProfile.capes"
+        ],
+        [
+          156296,
+          "singleplayer.backup.button"
+        ],
+        [
+          156448,
+          "multiplayer.status.ping"
+        ],
+        [
+          156490,
+          "multiplayer.status.unrequested"
+        ],
+        [
+          156907,
+          "createWorld.customize.buffet.title"
+        ],
+        [
+          157110,
+          "eagler-titleprobe: frames="
+        ],
+        [
+          157114,
+          "eagler-titleprobe: EXCEPTION "
+        ],
+        [
+          157667,
+          "options.sensitivity.min"
+        ],
+        [
+          157668,
+          "options.sensitivity.max"
+        ],
+        [
+          157670,
+          "options.chunkFade.none"
+        ],
+        [
+          157671,
+          "options.chunkFade.seconds"
+        ],
+        [
+          157673,
+          "options.chat.delay_none"
+        ],
+        [
+          157674,
+          "options.chat.delay"
+        ],
+        [
+          157676,
+          "options.gamma.min"
+        ],
+        [
+          157677,
+          "options.gamma.default"
+        ],
+        [
+          157678,
+          "options.gamma.max"
+        ],
+        [
+          157940,
+          "selectWorld.warning.deprecated.title"
+        ],
+        [
+          157942,
+          "selectWorld.warning.experimental.title"
+        ],
+        [
+          158464,
+          "Couldn't find profile with name: {}"
+        ]
+      ],
+      "calls": {
+        "3607": 1
+      },
+      "allocs": [],
+      "type": 0,
+      "p0type": null,
+      "fields": [],
+      "consts": [],
+      "wanted_strings": [
+        [
+          76756,
+          "editProfile.importExport"
+        ],
+        [
+          149966,
+          "editProfile.username"
+        ],
+        [
+          149968,
+          "editProfile.playerSkin"
+        ],
+        [
+          149971,
+          "editProfile.addSkin"
+        ],
+        [
+          149974,
+          "editProfile.clearSkin"
+        ],
+        [
+          149976,
+          "editProfile.steveOrAlex"
+        ],
+        [
+          155599,
+          "editProfile.title"
+        ],
+        [
+          156267,
+          "editProfile.capes"
+        ]
+      ]
+    }
+  ],
+  "callers": {
+    "34917": [
+      20478
+    ]
+  }
+}
