@@ -1,0 +1,43 @@
+name: Find 26.2 empty-world function
+on:
+  push:
+    paths:
+      - 'tools/wasm_gc_model.py'
+      - 'tools/find_26_2_empty_world_func.py'
+      - '.github/workflows/find-empty-world-func.yml'
+permissions:
+  contents: write
+jobs:
+  find:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install wasm-tools
+        run: |
+          set -euo pipefail
+          curl -fL --retry 5 https://github.com/bytecodealliance/wasm-tools/releases/download/v1.219.1/wasm-tools-1.219.1-x86_64-linux.tar.gz -o /tmp/wasm-tools.tgz
+          tar xzf /tmp/wasm-tools.tgz -C /tmp
+          sudo cp /tmp/wasm-tools-1.219.1-x86_64-linux/wasm-tools /usr/local/bin/wasm-tools
+      - name: Download and decode 26.2 client
+        run: |
+          set -euo pipefail
+          curl -fL --retry 5 https://raw.githubusercontent.com/Enchantment-Niko/mcjs/bc586558628e2d7ef8ea1cebf198495625619eb2/wasm-loader/26.2/eag26.2-wasm-br.wasm -o /tmp/client.br
+          python3 -m pip install --quiet brotli
+          python3 - <<'PY'
+          import brotli
+          raw=brotli.decompress(open('/tmp/client.br','rb').read())
+          open('/tmp/classes.wasm','wb').write(raw)
+          print(len(raw))
+          PY
+      - name: Find exact function by string pool
+        run: |
+          set -euo pipefail
+          python3 tools/find_26_2_empty_world_func.py /tmp/classes.wasm preview/26.3-asset-swap/empty-world-function.json
+      - name: Commit report
+        run: |
+          git config user.name 'world-list-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add preview/26.3-asset-swap/empty-world-function.json
+          git diff --cached --quiet || git commit -m 'Identify 26.2 empty world-list function'
+          git pull --rebase origin main
+          git push
