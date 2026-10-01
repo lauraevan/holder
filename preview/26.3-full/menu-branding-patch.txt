@@ -1,0 +1,12 @@
+raw_size 102114385
+raw_sha256 d5305deb5233bdaa30b280feb2d368fde391b0028c452d86c7c81554bd918d2f
+26.3-JM []
+Made by Joey-JM []
+Made by Joey []
+Joey-JM []
+Made by %s []
+Rewritten by %s []
+26.3 JM []
+patched_counts {'26.3-JM': 0, 'Made by Joey-JM': 0, 'Made by Joey': 0, 'Joey-JM': 0, 'Made by %s': 0, 'Rewritten by %s': 0}
+patched_sha256 d5305deb5233bdaa30b280feb2d368fde391b0028c452d86c7c81554bd918d2f
+compressed_size 18621655
