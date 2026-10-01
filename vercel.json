@@ -3,6 +3,20 @@
     {
       "source": "/",
       "destination": "/preview/26.3-full/index.html"
+    },
+    {
+      "source": "/preview/26.3-full/native/:name.wasm",
+      "destination": "/preview/26.3-full/:name.wasm.bin"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/preview/26.3-full/native/:name.wasm",
+      "headers": [
+        { "key": "Content-Type", "value": "application/wasm" },
+        { "key": "Content-Encoding", "value": "br" },
+        { "key": "Cache-Control", "value": "public, max-age=3600" }
+      ]
     }
   ]
 }
