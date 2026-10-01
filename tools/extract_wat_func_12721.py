@@ -6,32 +6,24 @@ TARGET_ORDINAL = 12623
 
 ordinal = -1
 capturing = False
-depth = 0
 out = []
 
 for line in sys.stdin:
     stripped = line.lstrip()
-    if not capturing:
-        # wasm-tools prints each defined function as a top-level "(func ..."
-        # line. Imported funcs live inside "(import ...)" and are skipped.
-        if stripped.startswith("(func "):
-            ordinal += 1
-            if ordinal == TARGET_ORDINAL:
-                capturing = True
-            else:
-                continue
-        else:
-            continue
+    is_func = stripped.startswith("(func ")
 
-    for ch in line:
-        out.append(ch)
-        if ch == "(":
-            depth += 1
-        elif ch == ")":
-            depth -= 1
+    if is_func:
+        ordinal += 1
+        if capturing:
+            # The next top-level defined function marks the end of the target.
+            break
+        if ordinal == TARGET_ORDINAL:
+            capturing = True
 
-    if capturing and depth == 0:
-        sys.stdout.write("".join(out))
-        sys.exit(0)
+    if capturing:
+        out.append(line)
 
-raise SystemExit(f"defined ordinal {TARGET_ORDINAL} not found; saw {ordinal + 1} functions")
+if not capturing:
+    raise SystemExit(f"defined ordinal {TARGET_ORDINAL} not found; saw {ordinal + 1} functions")
+
+sys.stdout.write("".join(out))
