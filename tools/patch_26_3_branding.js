@@ -135,6 +135,131 @@ function showEmptyWorldList(wasm) {
   console.error('empty world list: br_table 0 1 36 -> 1 1 36 at %d', hits[0]);
 }
 
+// Title screen profile button. Indices below are this build's (absolute
+// function, type and global numbers as `wasm-tools print` shows them); every
+// edit checks the bytes it expects before writing.
+const PB = {
+  createNormalMenuOptions: 136440,  // TitleScreen.createNormalMenuOptions
+  init: 54466,                      // TitleScreen.init
+  languageButton: 12394,            // CommonButtons.language(width, onPress, iconOnly)
+  addRenderableWidget: 1800,        // Screen.addRenderableWidget(screen, widget)
+  profileLambda: 36382, profileLambdaVt: 75502,          // opens EaglerProfileScreen26
+  multiplayerLambda: 36383, multiplayerLambdaVt: 75501,  // opens JoinMultiplayerScreen
+  accessibilityLambda: 36388,
+  titleScreen: 23172, screen: 20319, widthField: 9,
+  string: 22, charArray: 21, chars: 1, object: 11,
+  vtable: 20576, setX: 274, setY: 273, setterType: 1423, helperType: 111874,
+  languageSprite: 153282, languageLabel: 75507, languageTooltip: 153283,
+};
+
+const bytes = (...parts) => Buffer.concat(parts.map(p => Buffer.isBuffer(p) ? p : Buffer.from(p)));
+const op = (code, ...imms) => bytes([code], ...imms.map(encU));
+const gc = (sub, ...imms) => bytes([0xfb, sub], ...imms.map(encU));
+const refCast = (type, nullable = true) => bytes([0xfb, nullable ? 0x17 : 0x16], encS32(type));
+
+function replaceAll(body, from, to, expected, what) {
+  const parts = [];
+  let last = 0, n = 0;
+  for (let at = body.indexOf(from); at >= 0; at = body.indexOf(from, at + from.length)) {
+    parts.push(body.subarray(last, at), to);
+    last = at + from.length;
+    n++;
+  }
+  if (n !== expected) throw new Error(what + ': expected ' + expected + ' matches, found ' + n);
+  parts.push(body.subarray(last));
+  return Buffer.concat(parts);
+}
+
+// A new java.lang.String, built the way TeaVM's own char-run getters build
+// one, borrowing the String and char[] vtables from an existing constant.
+function newString(text) {
+  const g = op(0x23, PB.languageSprite);
+  return bytes(
+    g, gc(0x02, PB.string, 0), [0xd0, 0x6d],
+    g, gc(0x02, PB.string, 2), gc(0x02, PB.charArray, 0), [0xd0, 0x6d],
+    ...[...text].map(ch => bytes([0x41], encS32(ch.charCodeAt(0)))),
+    gc(0x08, PB.chars, text.length), gc(0x00, PB.charArray),
+    [0x41, 0x00], gc(0x00, PB.string));
+}
+
+// Point "Minecraft Realms" at the Multiplayer screen, and add a small sprite
+// button that opens the profile screen, left of the language button.
+function addProfileButton(wasm, sprite, label) {
+  const secs = sections(wasm);
+  const funcSec = secs.find(s => s.id === 3), code = secs.find(s => s.id === 10);
+  const imports = countFunctionImports(wasm);
+  let [nTypes, p] = readU(wasm, funcSec.body);
+  const types = [];
+  for (let i = 0; i < nTypes; i++) { let t; [t, p] = readU(wasm, p); types.push(t); }
+  let [count, pos] = readU(wasm, code.body);
+  const bodies = [];
+  for (let i = 0; i < count; i++) {
+    const [size, start] = readU(wasm, pos);
+    bodies.push(wasm.subarray(start, start + size));
+    pos = start + size;
+  }
+  const idx = fn => fn - imports;
+  const clone = imports + count, helper = clone + 1;
+
+  // 1. The Realms button's onPress lambda becomes the Multiplayer one (same
+  //    struct shape: vtable, monitor, TitleScreen), including the local that
+  //    holds it and the cast that restores that local on coroutine resume.
+  let body = bodies[idx(PB.createNormalMenuOptions)];
+  for (const [prefix, n] of [[[0xfb, 0x01], 1], [[0xfb, 0x05], 2], [[0xfb, 0x17], 2], [[0x63], 1]]) {
+    const enc = prefix[0] === 0xfb && prefix[1] !== 0x17 ? encU : encS32;
+    body = replaceAll(body, bytes(prefix, enc(PB.profileLambda)),
+                      bytes(prefix, enc(PB.multiplayerLambda)), n, 'realms lambda ' + prefix);
+  }
+  body = replaceAll(body, op(0x23, PB.profileLambdaVt), op(0x23, PB.multiplayerLambdaVt), 1, 'realms vtable');
+  bodies[idx(PB.createNormalMenuOptions)] = body;
+
+  // 2. Shift the language and accessibility buttons (x = width/2 - 22 + 0|24)
+  //    right by 12 so the three small buttons stay centered, then add ours.
+  body = bodies[idx(PB.init)];
+  const x = off => bytes(gc(0x02, PB.titleScreen, PB.widthField), [0x41, 0x02, 0x6d, 0x41, 22, 0x6b, 0x41, off, 0x6a]);
+  for (const off of [0, 24]) {
+    const to = Buffer.from(x(off)); to[to.length - 5] = 10;
+    body = replaceAll(body, x(off), to, 1, 'small button x ' + off);
+  }
+  const before = gc(0x01, PB.accessibilityLambda);
+  body = replaceAll(body, before, bytes([0x20, 0x00, 0x20, 0x09], op(0x10, helper), before), 1,
+                    'helper call site');  // helper(this, y)
+  bodies[idx(PB.init)] = body;
+
+  // 3. A copy of the language button factory with our sprite and label.
+  body = bodies[idx(PB.languageButton)];
+  body = replaceAll(body, op(0x23, PB.languageSprite), newString(sprite), 1, 'sprite');
+  body = replaceAll(body, op(0x23, PB.languageLabel), newString(label), 1, 'label');
+  body = replaceAll(body, op(0x23, PB.languageTooltip), newString(label), 1, 'tooltip');
+  bodies.push(body);
+  types.push(types[idx(PB.languageButton)]);
+
+  // 4. helper(TitleScreen this, int y): builds the profile lambda, the button,
+  //    adds it and places it at (width/2 - 34, y).
+  const setter = slot => bytes([0x20, 0x02], gc(0x02, PB.object, 0), refCast(PB.vtable, false),
+                               gc(0x02, PB.vtable, slot), op(0x14, PB.setterType));
+  const helperCode = bytes(
+    [0x01, 0x01, 0x63], encS32(PB.object),                 // local 2: (ref null 11)
+    gc(0x01, PB.profileLambda), [0x21, 0x02],
+    [0x20, 0x02], refCast(PB.profileLambda), op(0x23, PB.profileLambdaVt), gc(0x05, PB.profileLambda, 0),
+    [0x20, 0x02], refCast(PB.profileLambda), [0x20, 0x00], gc(0x05, PB.profileLambda, 2),
+    [0x41, 20, 0x20, 0x02, 0x41, 1], op(0x10, clone), [0x21, 0x02],
+    [0x20, 0x00], refCast(PB.screen), [0x20, 0x02], op(0x10, PB.addRenderableWidget), [0x1a],
+    [0x20, 0x02, 0x20, 0x00], gc(0x02, PB.titleScreen, PB.widthField),
+    [0x41, 0x02, 0x6d, 0x41, 34, 0x6b], setter(PB.setX),
+    [0x20, 0x02, 0x20, 0x01], setter(PB.setY),
+    [0x0b]);
+  bodies.push(helperCode);
+  types.push(PB.helperType);
+
+  const funcContent = Buffer.concat([encU(types.length), ...types.map(encU)]);
+  const codeContent = Buffer.concat([encU(bodies.length), ...bodies.flatMap(b => [encU(b.length), b])]);
+  console.error('profile button: realms -> multiplayer, clone #%d, helper #%d', clone, helper);
+  return bytes(wasm.subarray(0, funcSec.start), [3], encU(funcContent.length), funcContent,
+               wasm.subarray(funcSec.end, code.start), [10], encU(codeContent.length), codeContent,
+               wasm.subarray(code.end));
+}
+
 function patch(wasm, edits, options = {}) {
   const code = sections(wasm).find(s => s.id === 10);
   const [count, first] = readU(wasm, code.body);
@@ -179,6 +304,7 @@ function patch(wasm, edits, options = {}) {
     lowerTitleLabel(out, countFunctionImports(out) + getters[options.lowerLabel]);
   }
   if (options.emptyWorldList) showEmptyWorldList(out);
+  if (options.profileButton) return addProfileButton(out, 'icon/profile', 'eagler.menu.editProfile');
   return out;
 }
 
@@ -195,6 +321,7 @@ if (args[0] === '--inspect') {
   for (const arg of rest) {
     if (arg.startsWith('--lower-label=')) { options.lowerLabel = arg.slice('--lower-label='.length); continue; }
     if (arg === '--empty-world-list') { options.emptyWorldList = true; continue; }
+    if (arg === '--profile-button') { options.profileButton = true; continue; }
     const i = arg.indexOf('=');
     edits[arg.slice(0, i)] = arg.slice(i + 1);
   }

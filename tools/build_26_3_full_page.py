@@ -124,7 +124,7 @@ def main():
             patcher = Path(__file__).with_name("patch_26_3_branding.js")
             subprocess.run(["node", str(patcher), str(out_dir / name), str(out_dir / name)]
                            + ["%s=%s" % kv for kv in BRANDING_EDITS.items()]
-                           + ["--lower-label=26.3-JM", "--empty-world-list"], check=True)
+                           + ["--lower-label=26.3-JM", "--empty-world-list", "--profile-button"], check=True)
             data = (out_dir / name).read_bytes()
             size = len(data)
         version = hashlib.sha256(data).hexdigest()[:12]
