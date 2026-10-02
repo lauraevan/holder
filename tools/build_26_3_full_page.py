@@ -124,7 +124,7 @@ def main():
             patcher = Path(__file__).with_name("patch_26_3_branding.js")
             subprocess.run(["node", str(patcher), str(out_dir / name), str(out_dir / name)]
                            + ["%s=%s" % kv for kv in BRANDING_EDITS.items()]
-                           + ["--lower-label=26.3-JM"], check=True)
+                           + ["--lower-label=26.3-JM", "--empty-world-list"], check=True)
             data = (out_dir / name).read_bytes()
             size = len(data)
         version = hashlib.sha256(data).hexdigest()[:12]
@@ -369,16 +369,15 @@ for (const file of process.argv.slice(1)) {
     swap("\t\t\twidth: min(100vmin, 512px);\n\t\t\theight: min(100vmin, 512px);",
          "\t\t\twidth: min(calc(100vmin - 64px), 512px);\n\t\t\theight: min(calc(100vmin - 64px), 512px);")
 
-    # Boot screen: the clean eagtek WASM-GC image from the webmc 26.2 build (the
-    # 26.3 one adds a Chinese credit line under it). The status line stays
-    # visible, in white once the page switches to the red Mojang stage.
-    clean_boot = re.search(r'<img id="boot_image" src="(data:image/png;base64,[^"]+)"',
-                           Path(src).with_name("26.2.html").read_text(encoding="utf-8"))
-    html, replaced = re.subn(r'(<img id="boot_image" src=")data:image/png;base64,[^"]+(")',
-                             lambda m: m.group(1) + clean_boot.group(1) + m.group(2), html, count=1)
-    if replaced != 1:
+    # Boot screen: Minecraft's red Mojang Studios screen from the start instead
+    # of the eagtek splash image, with the download/status line kept below it.
+    html, removed = re.subn(r'\s*<img id="boot_image"[^>]*>', "", html, count=1)
+    if removed != 1:
         raise RuntimeError("boot image markup missing")
     swap("\t\t#rotate_device {\n\t\t\tdisplay: none;\n\t\t}",
+         "\t\t#loading_screen { background: #ef323d !important; }\n"
+         "\t\t#loading_screen #mojang_stage { display: flex; }\n"
+         "\t\t#loading_screen #boot_status,\n"
          "\t\t#loading_screen.minecraft-stage #boot_status { display: block; color: rgba(255, 255, 255, 0.9); }\n"
          "\t\t#rotate_device {\n\t\t\tdisplay: none;\n\t\t}")
 

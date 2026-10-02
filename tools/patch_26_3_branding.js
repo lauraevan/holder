@@ -117,6 +117,24 @@ function lowerTitleLabel(wasm, labelGetter) {
   console.error('title label: height - 20 -> height - 10 at %d', hits[0]);
 }
 
+// With no worlds saved, the Singleplayer world list's state machine branches
+// (br_table 0 1 36) straight to EaglerCreateWorldSelectionScreen ("What would
+// you like to do?") instead of listing the NoWorldsEntry. Same function shape
+// and fix as the 26.2 build's tools/patch_world_list_wasm.py: br_table 1 1 36.
+function showEmptyWorldList(wasm) {
+  const code = sections(wasm).find(s => s.id === 10);
+  const from = Buffer.from([0x0e, 0x02, 0x00, 0x01, 0x24]);
+  const hits = [];
+  for (let at = wasm.indexOf(from, code.body); at >= 0 && at < code.end; at = wasm.indexOf(from, at + 1)) hits.push(at);
+  if (hits.length !== 1) throw new Error('expected one empty-world-list branch, found ' + hits.length);
+  // 0e br_table, 02 two targets, 00 first target (the empty-list case), 01, 24 default.
+  wasm[hits[0] + 2] = 0x01;
+  if (!wasm.subarray(hits[0], hits[0] + 5).equals(Buffer.from([0x0e, 0x02, 0x01, 0x01, 0x24]))) {
+    throw new Error('empty-world-list branch not rewritten');
+  }
+  console.error('empty world list: br_table 0 1 36 -> 1 1 36 at %d', hits[0]);
+}
+
 function patch(wasm, edits, options = {}) {
   const code = sections(wasm).find(s => s.id === 10);
   const [count, first] = readU(wasm, code.body);
@@ -160,6 +178,7 @@ function patch(wasm, edits, options = {}) {
     if (!(options.lowerLabel in getters)) throw new Error('label getter not edited: ' + options.lowerLabel);
     lowerTitleLabel(out, countFunctionImports(out) + getters[options.lowerLabel]);
   }
+  if (options.emptyWorldList) showEmptyWorldList(out);
   return out;
 }
 
@@ -175,6 +194,7 @@ if (args[0] === '--inspect') {
   const edits = {}, options = {};
   for (const arg of rest) {
     if (arg.startsWith('--lower-label=')) { options.lowerLabel = arg.slice('--lower-label='.length); continue; }
+    if (arg === '--empty-world-list') { options.emptyWorldList = true; continue; }
     const i = arg.indexOf('=');
     edits[arg.slice(0, i)] = arg.slice(i + 1);
   }
