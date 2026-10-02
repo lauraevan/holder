@@ -21,6 +21,7 @@ PAYLOAD_FILES = {
     "eag-inline-sounds": "sounds.epk",
 }
 ASSETS_ID = "eag-inline-assets"
+MUSIC_ID = "eag-music"
 
 TRANSLATIONS = {
     "之前的渲染器没有干净地完成页面导航就停止了。": "The previous renderer stopped without finishing page navigation cleanly.",
@@ -48,12 +49,38 @@ BRANDING_EDITS = {
 
 # Replaces the base64 <script> decoder: same contract (Promise<Uint8Array>, one
 # in-flight request per id), but streams the payload from a sibling file.
-FETCH_DECODER = r"""  function decodePayload(id) {
+# Payload URLs carry a content hash (?v=), so they are kept in Cache Storage
+# after the first visit and later visits load them without the network. Entries
+# for URLs this build no longer uses are deleted.
+FETCH_DECODER = r"""  const PAYLOAD_CACHE = 'eagler-26.3-payloads';
+  function cachedFetch(url) {
+    if (typeof caches === 'undefined') return originalFetch(url);
+    return caches.open(PAYLOAD_CACHE).then(function (cache) {
+      return cache.match(url).then(function (hit) {
+        if (hit) { stats.cacheHits = (stats.cacheHits || 0) + 1; return hit; }
+        return originalFetch(url).then(function (response) {
+          if (response.ok) cache.put(url, response.clone()).catch(function () {});
+          return response;
+        });
+      });
+    }).catch(function () { return originalFetch(url); });
+  }
+  window.__eagCachedFetch = cachedFetch;
+  if (typeof caches !== 'undefined') {
+    const current = new Set(Object.values(PAYLOADS).map(function (p) { return new URL(p.url, location.href).href; })
+      .concat(Object.values(NATIVE_URLS).map(function (u) { return new URL(u, location.href).href; })));
+    caches.open(PAYLOAD_CACHE).then(function (cache) {
+      return cache.keys().then(function (requests) {
+        requests.forEach(function (request) { if (!current.has(request.url)) cache.delete(request); });
+      });
+    }).catch(function () {});
+  }
+  function decodePayload(id) {
     if (inflight.has(id)) return inflight.get(id);
     const entry = PAYLOADS[id];
     if (!entry) return Promise.reject(new Error('Missing payload: ' + id));
     window.__eaglerInlinePayloadCacheBytes += entry.size;
-    const pending = originalFetch(entry.url).then(async function (response) {
+    const pending = cachedFetch(entry.url).then(async function (response) {
       if (!response.ok) throw new Error('Failed to load ' + entry.url + ': ' + response.status);
       const out = new Uint8Array(entry.size);
       let offset = 0;
@@ -100,16 +127,31 @@ def main():
                            + ["--lower-label=26.3-JM"], check=True)
             data = (out_dir / name).read_bytes()
             size = len(data)
-        payloads[pid] = {"url": base + name, "size": size}
-        print("%-28s %-24s %10d %s" % (pid, name, size, hashlib.sha256(data).hexdigest()[:12]))
+        version = hashlib.sha256(data).hexdigest()[:12]
+        payloads[pid] = {"url": base + name + "?v=" + version, "size": size}
+        print("%-28s %-24s %10d %s" % (pid, name, size, version))
     html = block.sub("", html)
 
+    def versioned(url, path):
+        return url + "?v=" + hashlib.sha256(path.read_bytes()).hexdigest()[:12]
+
     assets = Path(".") / assets_url.lstrip("/")
-    payloads[ASSETS_ID] = {"url": assets_url, "size": assets.stat().st_size}
+    payloads[ASSETS_ID] = {"url": versioned(assets_url, assets), "size": assets.stat().st_size}
+    # Optional music pack built by build_music_epk.py, loaded like sounds.epk.
+    music = out_dir / "music.epk"
+    if music.exists():
+        payloads[MUSIC_ID] = {"url": versioned(base + "music.epk", music), "size": music.stat().st_size}
+    # vercel.json serves native/<name>.wasm as the Brotli-encoded <name>.wasm.bin.
+    native_urls = {}
+    for pid, image in (("eag-inline-wasm-br", "classes.wasm"), ("eag-inline-mesh-wasm-br", "mesh-worker.wasm"),
+                       ("eag-inline-server-wasm-br", "server-worker.wasm")):
+        native_urls[image] = base + "native/" + image + "?v=" + payloads[pid]["url"].rsplit("?v=", 1)[1]
 
     start = html.index("  function decodePayload(id) {")
     end = html.index("\n  let decoderBytesPromise;")
-    html = (html[:start] + "  const PAYLOADS = " + json.dumps(payloads) + ";\n" + FETCH_DECODER + html[end:])
+    html = (html[:start] + "  const PAYLOADS = " + json.dumps(payloads) + ";\n"
+            + "  const NATIVE_URLS = " + json.dumps(native_urls) + ";\n  window.__eagNativeURLs = NATIVE_URLS;\n"
+            + FETCH_DECODER + html[end:])
 
     total = sum(p["size"] for p in payloads.values())
     html, n = re.subn(r'var total = Number\("\d+"\)', 'var total = Number("%d")' % total, html)
@@ -119,6 +161,40 @@ def main():
         html = html.replace(zh, en)
     assert not re.search(r"[一-鿿]", html), "untranslated UI text left"
     html = html.replace("<title>Eaglercraft 26.3 Fixed</title>", "<title>Minecraft 26.3</title>")
+
+    # Home Screen app: icons from the page's grass-block favicon, a web app
+    # manifest, and the iOS tags that open it full screen without Safari UI.
+    favicon = re.search(r'<link rel="icon" type="image/png" href="data:image/png;base64,([^"]+)"', html)
+    (out_dir / "icon-source.png").write_bytes(base64.b64decode(favicon.group(1)))
+    for px in (180, 192, 512):
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(out_dir / "icon-source.png"),
+                        "-vf", "scale=%d:%d:flags=lanczos" % (px, px), str(out_dir / ("icon-%d.png" % px))],
+                       check=True)
+    (out_dir / "icon-source.png").unlink()
+    manifest = {
+        "name": "Minecraft 26.3",
+        "short_name": "Minecraft",
+        "start_url": "/",
+        "scope": "/",
+        "display": "fullscreen",
+        "orientation": "landscape",
+        "background_color": "#000000",
+        "theme_color": "#000000",
+        "icons": [{"src": base + "icon-%d.png" % px, "sizes": "%dx%d" % (px, px), "type": "image/png"}
+                  for px in (192, 512)],
+    }
+    (out_dir / "manifest.webmanifest").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    app_tags = (
+        '<link rel="manifest" href="%smanifest.webmanifest">\n'
+        '<link rel="apple-touch-icon" href="%sicon-180.png">\n'
+        '<meta name="apple-mobile-web-app-capable" content="yes">\n'
+        '<meta name="mobile-web-app-capable" content="yes">\n'
+        '<meta name="apple-mobile-web-app-title" content="Minecraft">\n'
+        '<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">\n'
+        '<meta name="theme-color" content="#000000">\n' % (base, base))
+    if html.count("<title>Minecraft 26.3</title>") != 1:
+        raise RuntimeError("title anchor missing")
+    html = html.replace("<title>Minecraft 26.3</title>", "<title>Minecraft 26.3</title>\n" + app_tags, 1)
 
 
     # iPadOS Safari reports a Macintosh UA, so also treat multi-touch Macs as mobile.
@@ -158,9 +234,25 @@ def main():
         1
     )
 
+    if MUSIC_ID in payloads:
+        def swap_music(old, new):
+            nonlocal html
+            if html.count(old) != 1:
+                raise RuntimeError("music anchor missing: " + old[:60])
+            html = html.replace(old, new, 1)
+        swap_music("      if (name === 'assets.epk' || name === 'sounds.epk') entry.url = payloadPrefix + name;",
+                   "      if (name === 'assets.epk' || name === 'sounds.epk' || name === 'music.epk') entry.url = payloadPrefix + name;")
+        swap_music("        : name === 'sounds.epk' ? decodePayload('eag-inline-sounds')",
+                   "        : name === 'sounds.epk' ? decodePayload('eag-inline-sounds')\n"
+                   "        : name === 'music.epk' ? decodePayload('" + MUSIC_ID + "')")
+        swap_music('\t\t\t{ url: "sounds.epk?v=49cbfb0a01b2374b", path: "" }\n\t\t];',
+                   '\t\t\t{ url: "sounds.epk?v=49cbfb0a01b2374b", path: "" },\n'
+                   '\t\t\t{ url: "music.epk?v=' + hashlib.sha256(music.read_bytes()).hexdigest()[:16] + '", path: "" }\n\t\t];')
+
     # Mobile streams the client image through the native route below, so its
     # download counter only covers the resource packs.
-    mobile_initial = payloads[ASSETS_ID]["size"] + payloads["eag-inline-sounds"]["size"]
+    mobile_initial = (payloads[ASSETS_ID]["size"] + payloads["eag-inline-sounds"]["size"]
+                      + payloads.get(MUSIC_ID, {}).get("size", 0))
     desktop_initial = (mobile_initial + payloads["eag-inline-decoder"]["size"]
                        + payloads["eag-inline-wasm-br"]["size"]
                        + payloads["eag-inline-mesh-wasm-br"]["size"])
@@ -217,7 +309,7 @@ def main():
          "                        try {\n"
          "                          try {\n"
          "                            step('requesting native image');\n"
-         "                            const response = await window.__eagNativeFetch(" + json.dumps(base + "native/") + " + name);\n"
+         "                            const response = await window.__eagCachedFetch(window.__eagNativeURLs[name]);\n"
          "                            if (!response.ok) throw new Error('HTTP ' + response.status);\n"
          "                            step('response ' + response.headers.get('content-type'));\n"
          "                            const reader = response.body.getReader();\n"
