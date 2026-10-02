@@ -369,6 +369,18 @@ for (const file of process.argv.slice(1)) {
     swap("\t\t\twidth: min(100vmin, 512px);\n\t\t\theight: min(100vmin, 512px);",
          "\t\t\twidth: min(calc(100vmin - 64px), 512px);\n\t\t\theight: min(calc(100vmin - 64px), 512px);")
 
+    # Boot screen: Minecraft's red Mojang Studios screen from the start instead
+    # of the eagtek splash image, with the download/status line kept below it.
+    html, removed = re.subn(r'\s*<img id="boot_image"[^>]*>', "", html, count=1)
+    if removed != 1:
+        raise RuntimeError("boot image markup missing")
+    swap("\t\t#rotate_device {\n\t\t\tdisplay: none;\n\t\t}",
+         "\t\t#loading_screen { background: #ef323d !important; }\n"
+         "\t\t#loading_screen #mojang_stage { display: flex; }\n"
+         "\t\t#loading_screen #boot_status,\n"
+         "\t\t#loading_screen.minecraft-stage #boot_status { display: block; color: rgba(255, 255, 255, 0.9); }\n"
+         "\t\t#rotate_device {\n\t\t\tdisplay: none;\n\t\t}")
+
     # Loader trace, hidden behind a "Logs" toggle in the bottom-right corner
     # (shown open with ?debug=1): the current step, recent loader log lines, page
     # errors, and where the previous attempt stopped if the tab was killed. The
