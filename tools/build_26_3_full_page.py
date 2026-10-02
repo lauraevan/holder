@@ -382,6 +382,11 @@ for (const file of process.argv.slice(1)) {
          "\t\t#loading_screen.minecraft-stage #boot_status { display: block; color: rgba(255, 255, 255, 0.9); }\n"
          "\t\t#rotate_device {\n\t\t\tdisplay: none;\n\t\t}")
 
+    # The client reports "Starting Minecraft — registries, textures, shaders,
+    # and block models…" once downloads finish; show just "Starting Minecraft…".
+    swap("\t\t\t\tif (st && text) { st.textContent = text; }",
+         "\t\t\t\tif (st && text) { st.textContent = /^Starting Minecraft\\b/.test(text) ? \"Starting Minecraft\\u2026\" : text; }")
+
     # Loader trace, hidden behind a "Logs" toggle in the bottom-right corner
     # (shown open with ?debug=1): the current step, recent loader log lines, page
     # errors, and where the previous attempt stopped if the tab was killed. The

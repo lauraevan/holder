@@ -674,7 +674,7 @@ window.__eaglerWasmServerWorkerBootstrapURL = URL.createObjectURL(new Blob(["(fu
 			try { window.__eaglerCrashJournal.stage("boot-" + pct + "-" + (text || "")); } catch (e) {}
 			try {
 				var st = document.getElementById("boot_status");
-				if (st && text) { st.textContent = text; }
+				if (st && text) { st.textContent = /^Starting Minecraft\b/.test(text) ? "Starting Minecraft\u2026" : text; }
 				var load = document.getElementById("loading_screen");
 				if (load && typeof pct === "number" && pct >= 80) {
 					load.classList.add("minecraft-stage");
