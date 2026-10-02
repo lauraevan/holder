@@ -1015,12 +1015,19 @@ var TeaVM=TeaVM||{};TeaVM.wasmGC=TeaVM.wasmGC||(()=>{let n=new Map;let e=null;le
 	</div>
 <script>
 (function () {
-  if (!(window.__eaglerMobileFastStart || new URLSearchParams(location.search).get("debug") === "1")) return;
   var box = document.createElement("div");
   box.id = "eagler_loader_trace";
   box.style.cssText = "position:fixed;left:8px;right:8px;top:8px;z-index:2147483647;max-height:40vh;"
     + "overflow:hidden;background:rgba(0,0,0,.8);color:#9f9;font:11px/1.35 monospace;padding:6px 8px;"
     + "border-radius:4px;white-space:pre-wrap;pointer-events:none";
+  var open = new URLSearchParams(location.search).get("debug") === "1";
+  box.style.display = open ? "block" : "none";
+  var toggle = document.createElement("button");
+  toggle.id = "eagler_loader_trace_toggle";
+  toggle.type = "button";
+  toggle.style.cssText = "position:fixed;right:12px;bottom:12px;z-index:2147483647;padding:6px 12px;"
+    + "font:12px/1.2 monospace;color:#fff;background:rgba(0,0,0,.65);border:1px solid #888;border-radius:4px";
+  toggle.addEventListener("click", function () { open = !open; box.style.display = open ? "block" : "none"; render(); });
   var started = performance.now(), errors = [];
   window.addEventListener("error", function (e) { errors.push("ERROR " + (e.message || e.error)); });
   window.addEventListener("unhandledrejection", function (e) {
@@ -1033,13 +1040,27 @@ var TeaVM=TeaVM||{};TeaVM.wasmGC=TeaVM.wasmGC||(()=>{let n=new Map;let e=null;le
   }
   var timer;
   function render() {
-    if (window.__eaglerGameReady === true) { clearInterval(timer); if (box.parentNode) box.parentNode.removeChild(box); return; }
+    if (window.__eaglerGameReady === true) {
+      clearInterval(timer);
+      [box, toggle].forEach(function (el) { if (el.parentNode) el.parentNode.removeChild(el); });
+      return;
+    }
+    var alert = !!(prev || errors.length || /^E:/.test(((window.__log || []).filter(function (l) {
+      return /^E:\[shell\]|^E:SHELL_ERR/.test(l); })[0]) || ""));
+    toggle.textContent = (open ? "Hide logs" : "Logs") + (alert ? " !" : "");
+    toggle.style.background = alert ? "rgba(170,20,20,.85)" : "rgba(0,0,0,.65)";
+    // Stay above the crash screen and the recovered-crash bar.
+    var bar = document.getElementById("eagler_recovered_crash");
+    toggle.style.bottom = bar ? (bar.offsetHeight + 24) + "px" : "12px";
+    if (document.body.lastElementChild !== toggle) { document.body.appendChild(box); document.body.appendChild(toggle); }
+    if (!open) return;
     var status = (document.getElementById("boot_status") || {}).textContent || "";
     var lines = (window.__log || []).filter(function (l) { return !/^BOOTSTAGE/.test(l); }).slice(-8);
     box.textContent = head + "[" + Math.round((performance.now() - started) / 1000) + "s] " + status + "\n"
       + lines.join("\n") + (errors.length ? "\n" + errors.slice(-3).join("\n") : "");
   }
   document.body.appendChild(box);
+  document.body.appendChild(toggle);
   timer = setInterval(render, 500);
   render();
 })();
