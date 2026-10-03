@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Minecraft 26.3</title>
+<style>
+html,body{margin:0;width:100%;height:100%;background:#000;color:#fff;font-family:Arial,sans-serif}
+body{display:grid;place-items:center}
+main{width:min(520px,calc(100% - 40px));text-align:center}
+h1{font-size:22px;margin:0 0 12px}
+p{font-size:14px;line-height:1.5;color:#aaa;margin:0 0 18px}
+progress{width:100%;height:10px}
+#status{margin-top:12px;font-size:13px;color:#888;word-break:break-word}
+button{margin-top:18px;background:#fff;color:#000;border:0;border-radius:8px;padding:10px 14px;font-weight:700;display:none}
+</style>
+</head>
+<body>
+<main>
+  <h1>Minecraft 26.3</h1>
+  <p>Loading the verified browser build. First launch can take a bit because the full client is being streamed into the page.</p>
+  <progress id="bar"></progress>
+  <div id="status">Connecting to build…</div>
+  <button id="retry">Retry</button>
+</main>
+<script>
+(() => {
+  const API_ASSET = "https://api.github.com/repos/TypeThe0ry/Gaius/releases/assets/605507691";
+  const DIRECT_GZ = "https://github.com/TypeThe0ry/Gaius/releases/download/v0.3.3/Gaius-26.3.html.gz";
+  const EXPECTED_GZIP_BYTES = 97375973;
+  const status = document.getElementById("status");
+  const bar = document.getElementById("bar");
+  const retry = document.getElementById("retry");
+
+  async function getResponse() {
+    const attempts = [
+      () => fetch(API_ASSET, {headers:{Accept:"application/octet-stream"}, cache:"no-store"}),
+      () => fetch(DIRECT_GZ, {cache:"no-store"})
+    ];
+    let last;
+    for (const attempt of attempts) {
+      try {
+        const r = await attempt();
+        if (r.ok && r.body) return r;
+        last = new Error("HTTP " + r.status);
+      } catch (e) {
+        last = e;
+      }
+    }
+    throw last || new Error("Unable to fetch build");
+  }
+
+  async function boot() {
+    retry.style.display = "none";
+    bar.removeAttribute("value");
+    status.textContent = "Connecting to build…";
+    try {
+      if (!("DecompressionStream" in globalThis)) {
+        throw new Error("This browser needs DecompressionStream support");
+      }
+
+      const response = await getResponse();
+      const length = Number(response.headers.get("content-length")) || EXPECTED_GZIP_BYTES;
+      let loaded = 0;
+      const reader = response.body.getReader();
+
+      const measured = new ReadableStream({
+        async pull(controller) {
+          const {done, value} = await reader.read();
+          if (done) {
+            controller.close();
+            return;
+          }
+          loaded += value.byteLength;
+          bar.max = length;
+          bar.value = Math.min(loaded, length);
+          status.textContent = "Downloading " + Math.round((loaded / length) * 100) + "%";
+          controller.enqueue(value);
+        },
+        cancel(reason) {
+          reader.cancel(reason).catch(()=>{});
+        }
+      });
+
+      status.textContent = "Downloading client…";
+      const decompressed = measured.pipeThrough(new DecompressionStream("gzip"));
+      const blob = await new Response(decompressed, {
+        headers:{"Content-Type":"text/html; charset=utf-8"}
+      }).blob();
+
+      status.textContent = "Starting Minecraft 26.3…";
+      bar.removeAttribute("value");
+      const url = URL.createObjectURL(blob);
+      location.replace(url);
+    } catch (e) {
+      console.error(e);
+      status.textContent = "Could not load: " + (e && e.message ? e.message : String(e));
+      retry.style.display = "inline-block";
+    }
+  }
+
+  retry.addEventListener("click", boot);
+  boot();
+})();
+</script>
+</body>
+</html>
