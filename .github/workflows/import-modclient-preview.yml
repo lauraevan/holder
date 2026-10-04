@@ -1,4 +1,4 @@
-name: import-modclient-preview-probe
+name: import-modclient-preview
 
 permissions:
   contents: write
@@ -8,6 +8,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/import-modclient-preview.yml"
+  workflow_dispatch:
 
 jobs:
   import:
@@ -17,19 +18,39 @@ jobs:
         with:
           ref: modclient-preview
           fetch-depth: 0
-      - name: Import signed artifact probe
+
+      - name: Import live ModClient standalone build
         shell: bash
         run: |
           set -euo pipefail
-          URL='https://sdmntprsouthcentralus.oaiusercontent.com/files/00000000-5290-81f7-9d1e-a1c5737105f0/raw?se=2026-10-03T22%3A43%3A58Z&sp=r&sv=2026-02-06&sr=b&scid=e27c83fe-1ef4-5dfe-afd7-c289ea677265&skoid=864daabb-d06a-46b3-a747-d35075313a83&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-03T15%3A48%3A55Z&ske=2026-10-04T15%3A48%3A55Z&sks=b&skv=2026-02-06&sig=ELeu9P9BTWb/R/pjjLQHDty%2BwT59HR0/7wp0xdMlwao%3D'
-          rm -rf /tmp/modclient-import modclient/probe-artifact
-          mkdir -p /tmp/modclient-import modclient/probe-artifact
-          curl --fail --location --retry 2 "$URL" -o /tmp/modclient-artifact.zip
-          unzip -q /tmp/modclient-artifact.zip -d /tmp/modclient-import
-          find /tmp/modclient-import -maxdepth 3 -type f -printf '%P %s bytes\n' | sort > modclient/probe-artifact/manifest.txt
-          cp -a /tmp/modclient-import/. modclient/probe-artifact/
+          URL='https://modclient-preview-build.onrender.com/index.html'
+          TMP='/tmp/modclient-render-index.html'
+
+          curl --fail --location --retry 5 --retry-delay 3 "$URL" -o "$TMP"
+          test -s "$TMP"
+          grep -Fq 'id="eag-inline-wasm-br"' "$TMP"
+
+          BYTES="$(stat -c '%s' "$TMP")"
+          echo "render_index_bytes=$BYTES"
+          if [ "$BYTES" -ge 99000000 ]; then
+            echo "Generated standalone HTML is too close to GitHub's 100 MB blob limit" >&2
+            exit 3
+          fi
+
+          cp "$TMP" index.html
+          cat > VERSION.txt <<'EOF'
+          ModClient v1 public preview
+          Source: https://modclient-preview-build.onrender.com/
+          Minecraft base: 26.2
+          Runtime: generic Fabric + Forge + NeoForge browser compatibility
+          TeaVM mode: fast-link preview
+          EOF
+          touch .nojekyll
+          sha256sum index.html VERSION.txt > MODCLIENT_SHA256.txt
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add modclient/probe-artifact
-          git commit -m "build: verify ModClient artifact relay"
+          git add index.html VERSION.txt MODCLIENT_SHA256.txt .nojekyll
+          git commit -m "build: mirror ModClient preview from Render" || exit 0
+          git pull --rebase origin modclient-preview
           git push origin HEAD:modclient-preview
