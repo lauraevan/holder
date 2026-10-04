@@ -8,6 +8,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/mirror-modclient-render-preview.yml"
+  workflow_dispatch:
 
 jobs:
   mirror:
@@ -16,62 +17,77 @@ jobs:
     env:
       PREVIEW_URL: https://modclient-preview-build.onrender.com
     steps:
-      - name: Wait for validated Render preview
+      - name: Wait for optimized Render preview
         shell: bash
         run: |
           set -euo pipefail
-          rm -f /tmp/modclient-index.html /tmp/modclient-version.txt
+          rm -rf /tmp/modclient-hosted
+          mkdir -p /tmp/modclient-hosted/lang
+
           ready=0
           for attempt in $(seq 1 100); do
-            code="$(curl --silent --show-error --location \
-              --connect-timeout 10 --max-time 60 \
-              --write-out '%{http_code}' \
-              --output /tmp/modclient-index.html \
-              "$PREVIEW_URL/index.html" || true)"
+            code="$(curl --silent --show-error --location               --connect-timeout 10 --max-time 60               --write-out '%{http_code}'               --output /tmp/modclient-hosted/index.html               "$PREVIEW_URL/index.html" || true)"
             bytes=0
-            if [ -f /tmp/modclient-index.html ]; then
-              bytes="$(stat -c '%s' /tmp/modclient-index.html || echo 0)"
+            if [ -f /tmp/modclient-hosted/index.html ]; then
+              bytes="$(stat -c '%s' /tmp/modclient-hosted/index.html || echo 0)"
             fi
-            echo "attempt=$attempt http=$code bytes=$bytes"
-            if [ "$code" = "200" ] \
-                && [ "$bytes" -gt 1000000 ] \
-                && grep -Fq 'id="eag-inline-wasm-br"' /tmp/modclient-index.html; then
+            echo "attempt=$attempt http=$code index_bytes=$bytes"
+            if [ "$code" = "200" ]                 && [ "$bytes" -gt 1000 ]                 && [ "$bytes" -lt 1000000 ]                 && grep -Fq 'classes.wasm-runtime.js' /tmp/modclient-hosted/index.html                 && grep -Fq 'worker-bootstrap.js' /tmp/modclient-hosted/index.html; then
               ready=1
               break
             fi
             sleep 20
           done
           test "$ready" = "1"
-          curl --fail --location "$PREVIEW_URL/VERSION.txt" -o /tmp/modclient-version.txt || true
-          sha256sum /tmp/modclient-index.html
-          stat -c 'index_bytes=%s' /tmp/modclient-index.html
-          if [ "$(stat -c '%s' /tmp/modclient-index.html)" -ge 100000000 ]; then
-            echo "Preview exceeds GitHub's 100 MB file limit" >&2
-            exit 3
-          fi
 
-      - name: Publish clean GitHack branch
+          files=(
+            classes.wasm
+            classes.wasm-runtime.js
+            worker-bootstrap.js
+            mesh-worker.wasm
+            server-worker.wasm
+            assets.epk
+            sounds.epk
+            favicon.png
+            HOSTED_MANIFEST.tsv
+            VERSION.txt
+          )
+          for file in "${files[@]}"; do
+            echo "fetching $file"
+            curl --fail --location --retry 4 --retry-delay 2               "$PREVIEW_URL/$file" -o "/tmp/modclient-hosted/$file"
+            test -s "/tmp/modclient-hosted/$file"
+            bytes="$(stat -c '%s' "/tmp/modclient-hosted/$file")"
+            echo "$file $bytes bytes"
+            if [ "$bytes" -ge 99000000 ]; then
+              echo "$file exceeds safe GitHub blob size" >&2
+              exit 3
+            fi
+          done
+
+          curl --fail --location --retry 4 --retry-delay 2             "$PREVIEW_URL/lang/en_us.json"             -o /tmp/modclient-hosted/lang/en_us.json
+          test -s /tmp/modclient-hosted/lang/en_us.json
+          touch /tmp/modclient-hosted/.nojekyll
+
+          find /tmp/modclient-hosted -type f -printf '%P %s bytes\n' | sort
+          sha256sum /tmp/modclient-hosted/index.html             /tmp/modclient-hosted/classes.wasm             /tmp/modclient-hosted/assets.epk             /tmp/modclient-hosted/sounds.epk
+
+      - name: Publish optimized GitHack branch
         shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          git clone --depth=1 \
-            "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
-            /tmp/holder
+          git clone --depth=1             "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"             /tmp/holder
           cd /tmp/holder
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config http.postBuffer 524288000
+
           git checkout --orphan modclient-preview-publish
           git rm -rf . >/dev/null 2>&1 || true
           find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
-          cp /tmp/modclient-index.html index.html
-          if [ -s /tmp/modclient-version.txt ]; then
-            cp /tmp/modclient-version.txt VERSION.txt
-          else
-            printf '%s\n' 'ModClient v1 Render-built GitHack preview' > VERSION.txt
-          fi
-          touch .nojekyll
+          cp -a /tmp/modclient-hosted/. .
+
           git add -A
-          git commit -m "build: publish ModClient GitHack preview"
+          git commit -m "build: publish optimized ModClient GitHack preview"
           git push --force origin HEAD:modclient-preview
