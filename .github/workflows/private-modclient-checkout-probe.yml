@@ -1,0 +1,28 @@
+name: private-modclient-checkout-probe
+
+permissions:
+  contents: write
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/private-modclient-checkout-probe.yml"
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          repository: lauraevan/modclient
+          ref: main
+          token: ${{ github.token }}
+          path: modclient-private
+          persist-credentials: false
+      - name: Verify checkout without exposing content
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f modclient-private/.github/workflows/publish-v1.yml
+          echo "private checkout succeeded"
