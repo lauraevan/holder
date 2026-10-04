@@ -1,0 +1,31 @@
+name: inspect-farmers-delight
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/inspect-farmers-delight.yml"
+  workflow_dispatch:
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch exact Farmer's Delight build
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL='https://cursemaven.com/curse/maven/farmers-delight-refabricated-993166/8906806/farmers-delight-refabricated-993166-8906806.jar'
+          curl --fail --location --retry 4 "$URL" -o /tmp/fd.jar
+          unzip -p /tmp/fd.jar fabric.mod.json | tee /tmp/fabric.mod.json
+          echo '=== FarmersDelight.onInitialize bytecode ==='
+          javap -classpath /tmp/fd.jar -c -p -s vectorwing.farmersdelight.FarmersDelight
+          echo '=== Classes containing AssertionError bytecode refs ==='
+          while IFS= read -r entry; do
+            cls="${entry%.class}"
+            cls="${cls//\//.}"
+            if javap -classpath /tmp/fd.jar -c -p "$cls" 2>/dev/null | grep -q 'AssertionError'; then
+              echo "--- $cls ---"
+              javap -classpath /tmp/fd.jar -c -p "$cls" 2>/dev/null | grep -B18 -A28 'AssertionError' || true
+            fi
+          done < <(jar tf /tmp/fd.jar | grep '\.class$' | grep '^vectorwing/farmersdelight/')
