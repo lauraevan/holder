@@ -1,56 +1,12 @@
-name: import-modclient-preview
-
-permissions:
-  contents: write
+name: legacy-modclient-preview-import
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - ".github/workflows/import-modclient-preview.yml"
   workflow_dispatch:
 
 jobs:
-  import:
+  deprecated:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-        with:
-          ref: modclient-preview
-          fetch-depth: 0
-
-      - name: Import live ModClient standalone build
-        shell: bash
-        run: |
-          set -euo pipefail
-          URL='https://modclient-preview-build.onrender.com/index.html'
-          TMP='/tmp/modclient-render-index.html'
-
-          curl --fail --location --retry 5 --retry-delay 3 "$URL" -o "$TMP"
-          test -s "$TMP"
-          grep -Fq 'id="eag-inline-wasm-br"' "$TMP"
-
-          BYTES="$(stat -c '%s' "$TMP")"
-          echo "render_index_bytes=$BYTES"
-          if [ "$BYTES" -ge 99000000 ]; then
-            echo "Generated standalone HTML is too close to GitHub's 100 MB blob limit" >&2
-            exit 3
-          fi
-
-          cp "$TMP" index.html
-          cat > VERSION.txt <<'EOF'
-          ModClient v1 public preview
-          Source: https://modclient-preview-build.onrender.com/
-          Minecraft base: 26.2
-          Runtime: generic Fabric + Forge + NeoForge browser compatibility
-          TeaVM mode: fast-link preview
-          EOF
-          touch .nojekyll
-          sha256sum index.html VERSION.txt > MODCLIENT_SHA256.txt
-
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html VERSION.txt MODCLIENT_SHA256.txt .nojekyll
-          git commit -m "build: mirror ModClient preview from Render" || exit 0
-          git pull --rebase origin modclient-preview
-          git push origin HEAD:modclient-preview
+      - run: |
+          echo "Legacy standalone importer disabled."
+          echo "Use mirror-modclient-render-preview.yml for the optimized multi-file GitHack build."
