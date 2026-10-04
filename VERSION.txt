@@ -1,0 +1,7 @@
+ModClient v1
+Minecraft base: 26.2
+Runtime: generic Fabric + Forge + NeoForge browser compatibility
+Preinstalled mod: Farmer's Delight 26.2-3.6.26+refabricated
+TeaVM mode: fast-link preview
+Packaging: multi-file hosted build
+Source commit: df379c0eb9900b104c8d8a3cd1dc13dbb6b8d6ba
