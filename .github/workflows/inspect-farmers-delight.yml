@@ -20,6 +20,11 @@ jobs:
           unzip -p /tmp/fd.jar fabric.mod.json | tee /tmp/fabric.mod.json
           echo '=== FarmersDelight.onInitialize bytecode ==='
           javap -classpath /tmp/fd.jar -c -p -s vectorwing.farmersdelight.FarmersDelight
+          echo '=== Assertion status initialization ==='
+          javap -classpath /tmp/fd.jar -c -p vectorwing.farmersdelight.refabricated.mlconfigs.ConfigBuilder | sed -n '/static {};/,$p'
+          javap -classpath /tmp/fd.jar -c -p vectorwing.farmersdelight.refabricated.mlconfigs.fabric.ConfigBuilderImpl | sed -n '/static {};/,$p'
+          echo '=== Configuration bytecode ==='
+          javap -classpath /tmp/fd.jar -c -p vectorwing.farmersdelight.common.Configuration
           echo '=== Classes containing AssertionError bytecode refs ==='
           while IFS= read -r entry; do
             cls="${entry%.class}"
